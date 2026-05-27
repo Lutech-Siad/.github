@@ -1,0 +1,89 @@
+name: CR
+description: Change Request — richiesta di modifica su funzionalità esistente
+labels: []
+body:
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere la modifica richiesta e la motivazione
+      placeholder: "Es: Il cliente richiede che il campo 'data consegna' sia obbligatorio nella scheda impianto"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va modificato
+      placeholder: |
+        - Identificare componenti impattati
+        - Implementare la modifica
+        - Test di regressione
+    validations:
+      required: true
+
+  - type: textarea
+    id: impatto-funzionalita
+    attributes:
+      label: Impatto su funzionalità esistenti
+      description: Quali funzionalità attuali vengono modificate o potrebbero rompersi
+      placeholder: |
+        - Scheda impianto: il campo 'data consegna' diventa obbligatorio
+        - API CreatePlant: aggiungere validazione server-side
+        - Report consegne: nessun impatto
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteri-accettazione
+    attributes:
+      label: Criteri di accettazione
+      description: Condizioni che devono essere vere perché la CR sia considerata completa (se applicabile)
+      placeholder: |
+        - [ ] Il campo 'data consegna' è obbligatorio in UI
+        - [ ] Validazione server-side attiva
+        - [ ] Dati esistenti migrati
+    validations:
+      required: false
+
+  - type: textarea
+    id: opzioni-considerate
+    attributes:
+      label: Opzioni considerate
+      description: Alternative valutate con pro e contro (se applicabile)
+      placeholder: |
+        **Opzione A — Campo obbligatorio con default**
+        - Pro: nessuna migrazione dati
+        - Contro: valore default potrebbe non essere corretto
+
+        **Opzione B — Campo obbligatorio + migration script**
+        - Pro: dati puliti
+        - Contro: serve coordinamento col DBA
+    validations:
+      required: false
+
+  - type: textarea
+    id: decisione-proposta
+    attributes:
+      label: Decisione proposta
+      description: Quale opzione si propone e perché (se ci sono opzioni)
+      placeholder: "Si propone l'Opzione B perché..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a report, documenti, issue collegate, richieste cliente
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Branch strategy, vincoli, dipendenze, stato
+    validations:
+      required: false

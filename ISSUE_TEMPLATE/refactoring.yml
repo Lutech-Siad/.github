@@ -1,0 +1,76 @@
+name: Refactoring
+description: Ristrutturazione del codice senza cambio di comportamento funzionale
+labels: []
+body:
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere cosa va ristrutturato e perché
+      placeholder: "Es: Eliminare la duplicazione nella gestione delle transazioni DB in ApplicationCore"
+    validations:
+      required: true
+
+  - type: textarea
+    id: codice-impattato
+    attributes:
+      label: Codice impattato
+      description: File, classi, namespace o layer coinvolti nel refactoring
+      placeholder: |
+        - `ApplicationCore/Offers/OfferManager.cs`
+        - `ApplicationCore/Gas/MixBalanceManager.cs`
+        - Pattern: tutti i Manager che usano `DbTransaction` direttamente
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rischio-regressione
+    attributes:
+      label: Rischio di regressione
+      description: Quanto è probabile che il refactoring introduca regressioni
+      options:
+        - Basso — solo riorganizzazione, nessuna logica toccata
+        - Medio — logica invariata ma flussi modificati
+        - Alto — flussi complessi, copertura test limitata
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va ristrutturato
+      placeholder: |
+        - Identificare codice da refactorizzare
+        - Applicare il refactoring
+        - Verificare che i test esistenti passino
+    validations:
+      required: true
+
+  - type: textarea
+    id: impatto-funzionalita
+    attributes:
+      label: Impatto su funzionalità esistenti
+      description: Quali funzionalità attuali potrebbero essere impattate dal refactoring (se applicabile)
+      placeholder: |
+        - Salvataggio offerte: flusso transazionale modificato
+        - Mix Balance: stessa transazione, rischio regressione
+        - API esterne: nessun impatto
+    validations:
+      required: false
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a report, documenti, issue collegate
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Branch strategy, vincoli, dipendenze, stato
+    validations:
+      required: false

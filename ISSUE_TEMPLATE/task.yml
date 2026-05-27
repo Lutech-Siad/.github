@@ -1,0 +1,40 @@
+name: Task
+description: Attività operativa generica (configurazione, documentazione, infrastruttura)
+labels: []
+body:
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere l'attività da svolgere
+      placeholder: "Es: Configurare i secrets di GitHub Actions per il deploy..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va fatto
+      placeholder: |
+        - Step 1
+        - Step 2
+        - Verifica
+    validations:
+      required: true
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a report, documenti, issue collegate
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Branch strategy, vincoli, dipendenze, stato
+    validations:
+      required: false

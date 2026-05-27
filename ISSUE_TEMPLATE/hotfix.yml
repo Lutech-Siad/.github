@@ -1,0 +1,91 @@
+name: Hotfix
+description: Correzione urgente da rilasciare direttamente su main
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **⚠️ Hotfix**: branch da `main`, merge su `main` + back-merge su `develop`.
+        > Usare solo per difetti critici in produzione.
+
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere il difetto critico in produzione
+      placeholder: "Es: In produzione il login fallisce per utenti con ruolo Admin"
+    validations:
+      required: true
+
+  - type: textarea
+    id: passi-per-riprodurre
+    attributes:
+      label: Passi per riprodurre
+      description: Sequenza di azioni per riprodurre il difetto in produzione
+      placeholder: |
+        1. Accedere con un utente ruolo Admin
+        2. Cliccare Login
+        3. → Errore 403
+    validations:
+      required: true
+
+  - type: textarea
+    id: comportamento-atteso
+    attributes:
+      label: Comportamento atteso vs attuale
+      description: Cosa dovrebbe succedere e cosa succede invece
+      placeholder: |
+        **Atteso**: Login riuscito, redirect alla dashboard
+        **Attuale**: Errore 403 — il check ruolo fallisce per Admin
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ambiente-impattato
+    attributes:
+      label: Ambiente impattato
+      description: Quale ambiente di produzione è impattato
+      options:
+        - prod
+        - test
+        - prod + test
+    validations:
+      required: true
+
+  - type: textarea
+    id: impatto
+    attributes:
+      label: Impatto
+      description: Conseguenze del difetto (utenti bloccati, workaround attivo, ecc.)
+      placeholder: "Es: Tutti gli utenti Admin non possono accedere — workaround: usano account di servizio"
+    validations:
+      required: false
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va fatto per risolvere l'hotfix — fix minimo e mirato
+      placeholder: |
+        - Fix minimo e mirato
+        - Test di verifica
+        - Merge su main e back-merge su develop
+    validations:
+      required: true
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a report, documenti, issue collegate
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Vincoli temporali, dipendenze, workaround attivo
+      placeholder: "Es: Workaround attivo: disabilitato il pulsante X in attesa del fix"
+    validations:
+      required: false

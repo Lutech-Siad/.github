@@ -1,0 +1,88 @@
+name: Bug
+description: Segnalazione di un difetto funzionale o comportamento inatteso
+labels: []
+body:
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere il difetto riscontrato
+      placeholder: "Es: L'utente riceve un errore 500 quando salva un'offerta con righe gas miste"
+    validations:
+      required: true
+
+  - type: textarea
+    id: passi-per-riprodurre
+    attributes:
+      label: Passi per riprodurre
+      description: Sequenza di azioni per riprodurre il bug
+      placeholder: |
+        1. Accedere alla sezione Offerte
+        2. Creare una nuova offerta
+        3. Aggiungere una riga gas CO2
+        4. Cliccare Salva
+        5. → Errore 500
+    validations:
+      required: true
+
+  - type: textarea
+    id: comportamento-atteso
+    attributes:
+      label: Comportamento atteso vs attuale
+      description: Cosa dovrebbe succedere e cosa succede invece
+      placeholder: |
+        **Atteso**: L'offerta viene salvata correttamente
+        **Attuale**: Errore 500 — NullReferenceException in OfferManager.Save()
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ambiente
+    attributes:
+      label: Ambiente
+      description: In quale ambiente è stato riscontrato il bug
+      options:
+        - develop
+        - dev
+        - test
+        - prod
+    validations:
+      required: true
+
+  - type: textarea
+    id: impatto
+    attributes:
+      label: Impatto
+      description: Conseguenze del bug (utenti bloccati, dati inconsistenti, workaround necessario, ecc.)
+      placeholder: "Es: Gli utenti non possono salvare offerte con mix gas — workaround: creare righe singole"
+    validations:
+      required: false
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va fatto per risolvere il bug
+      placeholder: |
+        - Identificare la causa root
+        - Correggere il comportamento
+        - Aggiungere test di regressione
+    validations:
+      required: true
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a report, documenti, issue collegate
+      placeholder: "Es: Segnalato in #12, log errore in Application Insights"
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Branch strategy, vincoli, dipendenze, stato
+    validations:
+      required: false

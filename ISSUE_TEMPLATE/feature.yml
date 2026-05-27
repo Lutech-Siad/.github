@@ -1,0 +1,89 @@
+name: Feature
+description: Nuova funzionalità o capability da implementare
+labels: []
+body:
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere la funzionalità richiesta e il valore per l'utente
+      placeholder: "Es: Permettere all'utente di esportare i report in PDF per condividerli con i clienti"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va fatto per implementare la feature
+      placeholder: |
+        - Definire requisiti
+        - Implementare componenti
+        - Test e documentazione
+    validations:
+      required: true
+
+  - type: textarea
+    id: impatto-funzionalita
+    attributes:
+      label: Impatto su funzionalità esistenti
+      description: Quali funzionalità attuali vengono modificate o potrebbero rompersi
+      placeholder: |
+        - Toolbar report: aggiunto pulsante "Esporta PDF"
+        - API Report: nuovo endpoint /export-pdf
+        - Dashboard: nessun impatto
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteri-accettazione
+    attributes:
+      label: Criteri di accettazione
+      description: Condizioni che devono essere vere perché la feature sia considerata completa
+      placeholder: |
+        - [ ] L'utente può cliccare "Esporta PDF" dalla lista offerte
+        - [ ] Il PDF contiene intestazione, righe e totali
+        - [ ] Il download funziona su Chrome, Edge, Firefox
+    validations:
+      required: false
+
+  - type: textarea
+    id: opzioni-considerate
+    attributes:
+      label: Opzioni considerate
+      description: Alternative valutate con pro e contro (se applicabile)
+      placeholder: |
+        **Opzione A — Libreria X**
+        - Pro: ...
+        - Contro: ...
+
+        **Opzione B — Sviluppo custom**
+        - Pro: ...
+        - Contro: ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: decisione-proposta
+    attributes:
+      label: Decisione proposta
+      description: Quale opzione si propone e perché (se ci sono opzioni)
+      placeholder: "Si propone l'Opzione A perché..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a report, documenti, mockup, issue collegate
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Branch strategy, vincoli, dipendenze, stato
+    validations:
+      required: false

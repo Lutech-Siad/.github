@@ -1,0 +1,89 @@
+name: RFC
+description: Request for Comments — proposta tecnica o architetturale da discutere
+labels: []
+body:
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere la proposta e il contesto decisionale
+      placeholder: "Es: Proposta di adottare Redis come cache distribuita per ridurre i tempi di risposta delle API"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va valutato, analizzato o prototipato per validare la decisione
+      placeholder: |
+        - PoC con benchmark
+        - Review architetturale
+        - Documentazione decisione in ADR
+    validations:
+      required: true
+
+  - type: textarea
+    id: impatto-funzionalita
+    attributes:
+      label: Impatto su funzionalità esistenti
+      description: Quali funzionalità attuali vengono modificate o potrebbero rompersi
+      placeholder: |
+        - Layer caching: introduce dipendenza da Redis
+        - API Offerte: modifica nel flusso di lettura
+        - Frontend: nessun impatto
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteri-accettazione
+    attributes:
+      label: Criteri di accettazione
+      description: Condizioni che devono essere vere perché la proposta sia considerata validata (se applicabile)
+      placeholder: |
+        - [ ] PoC dimostra performance < 100ms
+        - [ ] Costi mensili stimati < budget
+        - [ ] Approvazione team in review
+    validations:
+      required: false
+
+  - type: textarea
+    id: opzioni-considerate
+    attributes:
+      label: Opzioni considerate
+      description: Alternative valutate con pro e contro
+      placeholder: |
+        **Opzione A — Redis**
+        - Pro: performance, supporto nativo .NET
+        - Contro: infrastruttura aggiuntiva, costi
+
+        **Opzione B — MemoryCache locale**
+        - Pro: zero infrastruttura, semplice
+        - Contro: non condiviso tra istanze, invalidazione manuale
+    validations:
+      required: false
+
+  - type: textarea
+    id: decisione-proposta
+    attributes:
+      label: Decisione proposta
+      description: Quale opzione si propone e perché
+      placeholder: "Si propone l'Opzione A perché..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a documentazione, benchmark, RFC esterne, issue collegate
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Vincoli temporali, stakeholder coinvolti, dipendenze
+    validations:
+      required: false

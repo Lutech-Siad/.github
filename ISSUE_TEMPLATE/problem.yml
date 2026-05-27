@@ -1,0 +1,86 @@
+name: Problem
+description: Problema tecnico o operativo da investigare (non necessariamente un bug)
+labels: []
+body:
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere il problema riscontrato
+      placeholder: "Es: Le performance della query X degradano con volumi alti"
+    validations:
+      required: true
+
+  - type: textarea
+    id: passi-per-riprodurre
+    attributes:
+      label: Passi per riprodurre
+      description: Sequenza di azioni per riprodurre il problema (se riproducibile)
+      placeholder: |
+        1. Accedere alla sezione Offerte
+        2. Filtrare per date > 1 anno
+        3. → La pagina impiega 30+ secondi a caricare
+    validations:
+      required: false
+
+  - type: textarea
+    id: comportamento-atteso
+    attributes:
+      label: Comportamento atteso vs attuale
+      description: Cosa dovrebbe succedere e cosa succede invece
+      placeholder: |
+        **Atteso**: La lista offerte si carica in < 3 secondi
+        **Attuale**: Timeout dopo 30 secondi con volumi > 10.000 record
+    validations:
+      required: false
+
+  - type: dropdown
+    id: ambiente
+    attributes:
+      label: Ambiente
+      description: In quale ambiente è stato riscontrato il problema
+      options:
+        - develop
+        - dev
+        - test
+        - prod
+        - tutti
+    validations:
+      required: true
+
+  - type: textarea
+    id: impatto
+    attributes:
+      label: Impatto
+      description: Conseguenze del problema se non risolto (utenti bloccati, dati inconsistenti, degradazione performance, ecc.)
+      placeholder: "Es: Gli utenti del reparto vendite non riescono a caricare le offerte con più di 50 righe — timeout dopo 30s"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Cosa va fatto per risolvere o mitigare il problema
+      placeholder: |
+        - Analizzare la causa
+        - Proporre soluzione
+        - Implementare fix
+    validations:
+      required: true
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a report, documenti, issue collegate
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Branch strategy, vincoli, dipendenze, stato
+    validations:
+      required: false
