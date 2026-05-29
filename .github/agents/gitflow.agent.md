@@ -42,7 +42,7 @@ Flusso GitFlow:
 
 **Tipi**: `feat` · `fix` · `refactor` · `perf` · `test` · `docs` · `build` · `ci` · `chore`
 
-**Footer issue nei commit**: `Refs: #<n>` — sempre. `Closes:` si usa solo nelle PR, mai nei commit.
+**Footer issue nei commit**: `Refs: #<n>` — regola generale. Eccezione: nel repo `.github` (org-level), se il commit completa interamente una issue si può usare `Closes: #<n>`. `Closes:` nelle PR è sempre obbligatorio.
 
 > **Regola**: ogni commit deve avere un footer con riferimento alla issue. Se non esiste una issue, creala prima di committare (usa `issues.agent.md`). L'unica eccezione è `chore(repo)` per operazioni di bootstrap del repository.
 
@@ -62,7 +62,8 @@ L'agente deve sempre seguire il flusso completo — **non eseguire mai `git comm
    git config user.email
    ```
 3. **Decisione branch**: se l'utente è su `main` o `develop`:
-   - Proponi il nome del branch: `feature/<n>_<nome>`
+   - **Eccezione `.github`**: il repo org-level `Lutech-Siad/.github` non ha `develop` — si committa direttamente su `main` senza branch feature né PR. Se il commit chiude interamente una issue, usare `Closes: #<n>` nel footer
+   - **Tutti gli altri repo**: proponi il nome del branch: `feature/<n>_<nome>`
    - **Chiedere conferma** del nome prima di crearlo:
      > "Branch proposto: `feature/42_angular-migration`. Confermi o preferisci un altro nome?"
    - Solo dopo conferma eseguire `git checkout -b <nome-confermato>`

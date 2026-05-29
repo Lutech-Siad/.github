@@ -69,13 +69,40 @@ Ogni issue deve avere un tipo assegnato (via GraphQL — `updateIssueIssueType`)
 | Estimate Hours | number | Ore stimate | ⚪ |
 | External References | text | URL o riferimento esterno | ⚠️ Bug, Problem, Hotfix, Feature, RFC, CR |
 
-Impostazione via GraphQL `setIssueFieldValue`:
-- Single select → `singleSelectOptionId`
-- Date → `dateValue` (formato `YYYY-MM-DD`)
-- Number → `numberValue`
-- Text → `textValue`
+### Impostazione campi via GraphQL
 
-Vedere `memories/repo/github-api-issue-fields.md` per i field ID e option ID.
+Mutation: `setIssueFieldValue` — accetta un array `issueFields` con tutti i campi da impostare in una singola chiamata.
+
+```graphql
+mutation {
+  setIssueFieldValue(input: {
+    issueId: "<issue-node-id>",
+    issueFields: [
+      { fieldId: "<id>", singleSelectOptionId: "<option-id>" },
+      { fieldId: "<id>", dateValue: "YYYY-MM-DD" },
+      { fieldId: "<id>", numberValue: <n> },
+      { fieldId: "<id>", textValue: "<testo>" }
+    ]
+  }) { issue { id } }
+}
+```
+
+### Field ID e Option ID
+
+Recuperare a runtime con questa query — **non hardcodare**:
+
+```bash
+gh api graphql -f query='{ organization(login: "Lutech-Siad") {
+  issueFields(first: 20) { nodes {
+    ... on IssueFieldSingleSelect { id name options { id name } }
+    ... on IssueFieldDate { id name }
+    ... on IssueFieldNumber { id name }
+    ... on IssueFieldText { id name }
+  } }
+} }'
+```
+
+I prefissi ID indicano il tipo: `IFSS_` = single select, `IFD_` = date, `IFN_` = number, `IFT_` = text, `IFSSO_` = option value.
 
 ## Comandi principali
 
@@ -153,6 +180,7 @@ L'utente può fornire i requisiti in vari modi: testo libero, elenco, file markd
 1. **Leggi l'input** dell'utente e identifica:
    - Quante issue creare (una o più)
    - Per ciascuna: tipo, titolo, scope, repo, milestone, assignee, campi
+   - **Relazioni**: l'issue è indipendente o è una sub-issue di un'altra issue (esistente o tra quelle da creare)?
 2. **Inferisci** dai dati disponibili:
    - **Issue Type**: dal contenuto (migrazione → Migration, bug → Bug, configurazione → Task, ecc.)
    - **Component**: dal repo o dal contesto (nexusq-frontend → `frontend`, più repo → `multi-projects`)
@@ -242,14 +270,38 @@ Solo dopo conferma esplicita, eseguire in sequenza:
 5. **Aggiungi al project** con `gh project item-add`
 6. **Conferma** mostrando: URL della issue, numero, tipo, tutti i campi impostati
 
+### Sub-issue
+
+Quando una issue è logicamente parte di un'altra (es. un task specifico dentro una feature più ampia):
+
+1. **In Fase 1**: identificare se l'issue ha un parent — dall'input dell'utente o dal contesto
+2. **In Fase 2**: se il parent non è chiaro, chiedere: "Questa issue è indipendente o è sub-issue di #N?"
+3. **In Fase 3**: mostrare nella bozza `Parent: #N` (o "indipendente")
+4. **In Fase 4**: dopo la creazione, collegare con GraphQL:
+
+```graphql
+mutation {
+  addSubIssue(input: {
+    issueId: "<parent-node-id>",
+    subIssueId: "<child-node-id>"
+  }) { issue { id } subIssue { id } }
+}
+```
+
+Per ottenere il `node_id` di una issue esistente:
+```bash
+gh api repos/Lutech-Siad/<repo>/issues/<n> --jq '.node_id'
+```
+
 ### Issue multiple
 
 Se l'utente fornisce requisiti per più issue:
 
 1. Fase 1-2: analizzare tutte insieme, chiedere i campi mancanti in blocco
-2. Fase 3: mostrare **tutte le bozze** in una tabella riassuntiva + body di ciascuna
-3. Fase 4: dopo conferma, crearle in sequenza
-4. Riepilogo finale con tutti i numeri, URL e campi
+2. **Identificare relazioni**: stabilire se alcune issue sono sub-issue di altre (tra quelle da creare o di issue esistenti). Proporre la struttura gerarchica all'utente
+3. Fase 3: mostrare **tutte le bozze** in una tabella riassuntiva + body di ciascuna, evidenziando le relazioni parent/child
+4. Fase 4: dopo conferma, creare in ordine corretto — **prima le parent, poi le sub-issue** (servono gli ID parent per il collegamento)
+5. Riepilogo finale con tutti i numeri, URL, campi e relazioni
 
 > **Regola assoluta**: i campi Priority, Effort, Activity, Component devono essere impostati su **ogni issue senza eccezione**. Non creare mai una issue senza aver completato tutti e 4 i campi + Issue Type + aggiunta al project.
 
@@ -274,6 +326,17 @@ I template sono definiti nei file `.github/ISSUE_TEMPLATE/*.yml` di ciascun repo
 Se il template non esiste per il tipo richiesto, segnalare all'utente e chiedere come procedere.
 
 > **Non inventare strutture**: il body deve sempre rispecchiare il template attuale del repo.
+
+## Eccezione repo `.github` (org-level)
+
+Il repo `Lutech-Siad/.github` **non ha branch `develop`** e non segue il flusso GitFlow standard:
+
+- Si può committare e pushare **direttamente su `main`**
+- I commit che completano interamente il lavoro di una issue possono usare `Closes: #<n>` nel footer (invece di `Refs:`), chiudendo direttamente la issue
+- I commit che rappresentano lavoro parziale usano comunque `Refs: #<n>`
+- Non è necessario creare branch feature né aprire PR
+
+Questo vale **solo** per il repo `.github`. Tutti gli altri repo dell'org seguono GitFlow con PR obbligatoria.
 
 ## Lingua
 

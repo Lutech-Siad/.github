@@ -118,9 +118,11 @@ Refs: #8
 
 Quando esiste una issue GitHub correlata, aggiungere nel footer:
 
-- `Refs: #<numero>` — riferimento alla issue collegata
+- `Refs: #<numero>` — riferimento alla issue collegata (regola generale per i commit)
 
 - `Closes: #<numero>` si usa **solo nelle PR**, mai nei commit. La chiusura automatica della issue avviene tramite il footer della PR al merge su `main`.
+
+**Eccezione repo `.github` (org-level)**: il repo `Lutech-Siad/.github` non ha branch `develop` e non usa PR. Se un commit completa interamente una issue, si può usare `Closes: #<numero>` direttamente nel commit footer.
 
 Il primo commit di baseline (`chore(repo)`) non richiede riferimento a issue.
 

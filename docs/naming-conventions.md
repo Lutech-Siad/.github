@@ -63,9 +63,12 @@ Standard: **Conventional Commits 1.0.0**
 | Situazione | Footer |
 |---|---|
 | Commit collegato a issue | `Refs: #<n>` |
+| Commit che chiude issue (solo repo `.github`) | `Closes: #<n>` |
 | Bootstrap repo (nessuna issue) | Nessun footer richiesto |
 
-> **Regola**: nei commit si usa **sempre** `Refs:`, mai `Closes:`. Il footer `Closes: #<n>` va **solo nelle PR** (GitHub chiude la issue al merge della PR).
+> **Regola generale**: nei commit si usa `Refs:`, il footer `Closes: #<n>` va **solo nelle PR** (GitHub chiude la issue al merge della PR).
+>
+> **Eccezione repo `.github` (org-level)**: il repo `Lutech-Siad/.github` non ha branch `develop` e non usa PR. Se un commit completa interamente una issue, si può usare `Closes: #<n>` direttamente nel footer del commit.
 
 Eccezione: `chore(repo)` per operazioni di bootstrap del repository non richiede footer issue.
 
