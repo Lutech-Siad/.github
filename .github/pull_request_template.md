@@ -23,9 +23,16 @@
 - [ ] Nuovi test aggiunti (se applicabile)
 - [ ] Documentazione aggiornata (se applicabile)
 - [ ] Nessun breaking change non documentato
+- [ ] Assegnatario impostato
+- [ ] Milestone collegata
+- [ ] Project collegato
 
 ## Note
 
 - 
 
-<!-- Footer: Closes: #N (sostituire N con il numero della issue collegata) -->
+<!--
+Footer issue:
+- Closes: #N → SOLO se questa PR chiude completamente la issue
+- Refs: #N   → se la PR contribuisce alla issue ma non la chiude del tutto
+-->
