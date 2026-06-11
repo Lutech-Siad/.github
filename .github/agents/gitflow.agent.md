@@ -142,10 +142,13 @@ Il **PR template** esiste nel repo org `Lutech-Siad/.github` (file `.github/pull
 ```
 📋 BOZZA PR
 
-Repo:    Lutech-Siad/<repo>
-Base:    <branch base>
-Head:    <branch corrente>
-Titolo:  <type>(<scope>): <descrizione>
+Repo:       Lutech-Siad/<repo>
+Base:       <branch base>
+Head:       <branch corrente>
+Titolo:     <type>(<scope>): <descrizione>
+Assignee:   <username>
+Milestone:  <nome>
+Project:    <nome project>
 
 Body (da template):
 ---
@@ -195,7 +198,13 @@ gh pr create \
   --repo Lutech-Siad/<repo> \
   --base <branch-base> \
   --title "<titolo>" \
-  --body-file "$env:TEMP\pr.md"
+  --body-file "$env:TEMP\pr.md" \
+  --assignee <username> \
+  --milestone "<nome-milestone>"
+
+# Aggiungi al project
+gh project item-add <numero-project> --owner Lutech-Siad \
+  --url <url-pr-appena-creata>
 ```
 
 ### Comandi utili PR
