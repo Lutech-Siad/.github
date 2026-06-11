@@ -110,13 +110,15 @@ git commit -m "<type>(<scope>): <descrizione>" -m "<body>" -m "Refs: #<n>"
 **Dopo il commit: fermarsi. Non fare push.**
 Push solo su richiesta esplicita: `git push origin <branch>`
 
-> **Regola naming branch**: `<tipo>/<n>_<slug>` — numero issue + underscore + kebab-case. Es: `feature/42_angular-migration`, `hotfix/7_csp-header-missing`. Se non esiste una issue, creala prima (usa `issues.agent.md`).
+> **Regola naming branch**: `<tipo>/<n>_<slug>` — numero issue + underscore + kebab-case **in inglese** (mai italiano). Es: `feature/42_angular-migration`, `hotfix/7_csp-header-missing`. Se non esiste una issue, creala prima (usa `issues.agent.md`).
 
 ## Workflow PR
 
 L'agente deve sempre seguire il flusso completo — **non eseguire mai `gh pr create` senza aver mostrato la bozza e ricevuto conferma**.
 
 > **Regola**: ogni PR deve referenziare la issue con `Closes: #<n>` nel footer. `Refs:` si usa solo nei commit, mai nelle PR. Se manca la issue, creala prima di aprire la PR.
+
+> **Development box**: `Closes: #<n>` nel body della PR popola automaticamente il box "Development" in GitHub. `Refs:` non crea il link. Le PR con `Closes:` verso `develop` mostrano il link ma **non chiudono la issue** — GitHub chiude automaticamente solo su merge verso `main` (branch di default). Le issue rimangono aperte finché non mergia la release PR su `main`.
 
 ### Fase 1 — Preparazione
 
@@ -224,6 +226,8 @@ gh issue close <n> \
 - Quando crei un `feature/*` branch collegato a una issue → commento di avvio
 - Quando apri una PR → il body della PR referenzia già la issue con `Closes: #<n>`
 - Quando la issue non si chiude in automatico dopo il merge → chiusura manuale con commento
+
+**Release PR → `main`**: la PR di release (develop → main) è una squash PR che ingloba più feature. Il body deve includere `Closes: #<n>` per **tutte le issue** coperte dalla release (ricavate dai branch e PR mergiate su develop). Solo così GitHub chiude in automatico tutte le issue al merge su `main`.
 
 ## Lingua
 

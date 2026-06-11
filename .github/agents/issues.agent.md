@@ -147,14 +147,22 @@ gh issue comment <n> --repo Lutech-Siad/<repo> --body "<commento>"
 ```bash
 # Lista milestone
 gh api repos/Lutech-Siad/<repo>/milestones \
-  --jq '.[] | "\(.number) \(.title) — open:\(.open_issues)"'
+  --jq '.[] | "\(.number) \(.title) due:\(.due_on) — open:\(.open_issues)"'
 
 # Crea milestone
 gh api repos/Lutech-Siad/<repo>/milestones \
   --method POST \
   --field title="<nome>" \
-  --field description="<descrizione>"
+  --field description="<descrizione>" \
+  --field due_on="YYYY-MM-DDT00:00:00Z"
 ```
+
+**Workflow creazione milestone**: prima di creare una milestone, mostrare bozza con:
+- Nome
+- Descrizione
+- Due date (data di scadenza — unico campo data supportato da GitHub)
+
+Chiedere conferma all'utente. Se la milestone va creata su più repo, indicarli tutti nella bozza e crearla su ciascuno.
 
 ### GitHub Project (org-level)
 
@@ -304,6 +312,22 @@ Se l'utente fornisce requisiti per più issue:
 5. Riepilogo finale con tutti i numeri, URL, campi e relazioni
 
 > **Regola assoluta**: i campi Priority, Effort, Activity, Component devono essere impostati su **ogni issue senza eccezione**. Non creare mai una issue senza aver completato tutti e 4 i campi + Issue Type + aggiunta al project.
+
+### Multi-repo
+
+Quando il lavoro tocca più repository (es. modifica API backend + aggiornamento frontend):
+
+- Creare **almeno una issue per ogni repo** coinvolto
+- Collegare le issue cross-repo come sub-issue di una parent (nel repo più rappresentativo o nel repo in cui vive la feature principale)
+- Component della parent: `multi-projects`
+- Component delle sub-issue: il componente specifico del repo (`frontend`, `backend`, ecc.)
+
+### Quando usare sub-issue vs checklist
+
+- **Sub-issue**: quando l'item richiede un proprio branch, PR e ciclo di review dedicato. Ogni sub-issue = 1 branch = 1 PR.
+- **Checklist nel body**: solo per step di verifica o reminder che non generano lavoro separato (es. "verificare che compili", "aggiornare documentazione").
+
+> Non usare step/checklist per lavoro che richiede branch dedicati — creare sub-issue.
 
 ## Template issue (dinamici)
 
