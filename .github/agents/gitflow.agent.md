@@ -32,7 +32,8 @@ Per la gestione standalone delle issue (creazione, modifica, label, milestone, p
 | `develop` | merge commit | 1 approval obbligatoria |
 
 Flusso GitFlow:
-- `feature/*` → `develop`
+- `feature/*` → `develop` (nuove funzionalità)
+- `fix/*` → `develop` (bug fix non urgenti — Problem/Bug non urgenti)
 - `release/*` → `main` + back-merge su `develop`
 - `hotfix/*` → `main` + back-merge su `develop`
 
@@ -63,7 +64,7 @@ L'agente deve sempre seguire il flusso completo — **non eseguire mai `git comm
    ```
 3. **Decisione branch**: se l'utente è su `main` o `develop`:
    - **Eccezione `.github`**: il repo org-level `Lutech-Siad/.github` non ha `develop` — si committa direttamente su `main` senza branch feature né PR. Se il commit chiude interamente una issue, usare `Closes: #<n>` nel footer
-   - **Tutti gli altri repo**: proponi il nome del branch: `feature/<n>_<nome>`
+   - **Tutti gli altri repo**: proponi il nome del branch in base al tipo: `feature/<n>_<nome>` per nuove funzionalità, `fix/<n>_<nome>` per bug fix non urgenti
    - **Chiedere conferma** del nome prima di crearlo:
      > "Branch proposto: `feature/42_angular-migration`. Confermi o preferisci un altro nome?"
    - Solo dopo conferma eseguire `git checkout -b <nome-confermato>`
@@ -110,7 +111,7 @@ git commit -m "<type>(<scope>): <descrizione>" -m "<body>" -m "Refs: #<n>"
 **Dopo il commit: fermarsi. Non fare push.**
 Push solo su richiesta esplicita: `git push origin <branch>`
 
-> **Regola naming branch**: `<tipo>/<n>_<slug>` — numero issue + underscore + kebab-case **in inglese** (mai italiano). Es: `feature/42_angular-migration`, `hotfix/7_csp-header-missing`. Se non esiste una issue, creala prima (usa `issues.agent.md`).
+> **Regola naming branch**: `<tipo>/<n>_<slug>` — numero issue + underscore + kebab-case **in inglese** (mai italiano). Tipi validi: `feature/`, `fix/`, `release/`, `hotfix/`. Es: `feature/42_angular-migration`, `fix/19_gas-contract-null-ref`, `hotfix/7_csp-header-missing`. Se non esiste una issue, creala prima (usa `issues.agent.md`).
 
 ## Workflow PR
 
@@ -124,7 +125,7 @@ L'agente deve sempre seguire il flusso completo — **non eseguire mai `gh pr cr
 
 1. Verifica che ci siano commit pushati sul branch corrente
 2. Determina il branch base:
-   - `feature/*` → `develop`
+   - `feature/*`, `fix/*` → `develop`
    - `release/*`, `hotfix/*` → `main`
 
 ### Fase 2 — Bozza PR e conferma
