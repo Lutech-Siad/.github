@@ -113,6 +113,31 @@ Push solo su richiesta esplicita: `git push origin <branch>`
 
 > **Regola naming branch**: `<tipo>/<n>_<slug>` — numero issue + underscore + kebab-case **in inglese** (mai italiano). Tipi validi: `feature/`, `fix/`, `release/`, `hotfix/`. Es: `feature/42_angular-migration`, `fix/19_gas-contract-null-ref`, `hotfix/7_csp-header-missing`. Se non esiste una issue, creala prima (usa `issues.agent.md`).
 
+## Workflow release (`release/*` e `hotfix/*`)
+
+Un branch `release/*` (o `hotfix/*`) richiede sempre una issue collegata, come ogni altro branch.
+
+### Fase 0 — Issue di release
+
+1. Verifica se esiste già una issue di release per la milestone target:
+   `gh issue list --repo Lutech-Siad/<repo> --milestone "<milestone>" --search "release"`
+2. Se non esiste, creala (tipo `Task`, milestone = versione target, es. `v.1.1.0`) — usa `issues.agent.md`
+3. **Non collegare le issue incluse nel rilascio come sub-issue** della issue di release: sono lavoro già completato con proprio branch/PR dedicato, il raggruppamento è già garantito dalla milestone condivisa. Le sub-issue si usano solo per scomporre lavoro non ancora fatto (vedi `issues.agent.md`)
+4. Nel body della issue di release, elenca (lista puntata, non sub-issue) le issue incluse per riferimento
+
+### Determinazione versione
+
+Il tag è calcolato automaticamente dal workflow `release.yml` al merge su `main` (non calcolarlo a mano):
+- `release/*` → bump **minor**
+- `hotfix/*` → bump **patch**
+- Bump **major** solo tramite `workflow_dispatch` manuale (breaking change)
+
+Per capire quale bump aspettarsi, controlla i commit dall'ultimo tag (`git log <ultimo-tag>..develop --oneline`): solo `feat`/`fix` senza `BREAKING CHANGE` → minor; presenza di `BREAKING CHANGE` nel footer → serve bump major manuale.
+
+### Branch
+
+Naming standard: `release/<n>_v<major>-<minor>-<patch>` (es. `release/12_v1-1-0`). Segue poi il workflow PR descritto sotto (sezione "Release PR → main").
+
 ## Workflow PR
 
 L'agente deve sempre seguire il flusso completo — **non eseguire mai `gh pr create` senza aver mostrato la bozza e ricevuto conferma**.

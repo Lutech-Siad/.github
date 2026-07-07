@@ -38,6 +38,8 @@ Branch fissi (non seguono il pattern):
 
 Regola operativa: ogni branch `feature/*`, `release/*`, `hotfix/*` deve avere una issue collegata. Se non esiste, crearla prima di staccare il branch.
 
+Per `release/*`, la issue collegata rappresenta il rilascio stesso: non creare sub-issue delle issue incluse, il raggruppamento è già garantito dalla milestone condivisa.
+
 ---
 
 ## 3. Commit Message
