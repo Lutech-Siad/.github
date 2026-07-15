@@ -121,9 +121,9 @@ Un branch `release/*` (o `hotfix/*`) richiede sempre una issue collegata, come o
 
 1. Verifica se esiste già una issue di release per la milestone target:
    `gh issue list --repo Lutech-Siad/<repo> --milestone "<milestone>" --search "release"`
-2. Se non esiste, creala (tipo `Task`, milestone = versione target, es. `v.1.1.0`) — usa `issues.agent.md`
+2. Se non esiste, creala con il template issue **Release** (`.github/ISSUE_TEMPLATE/release.yml`, tipo `Task`, milestone = versione target, es. `v.1.1.0`) — usa `issues.agent.md`
 3. **Non collegare le issue incluse nel rilascio come sub-issue** della issue di release: sono lavoro già completato con proprio branch/PR dedicato, il raggruppamento è già garantito dalla milestone condivisa. Le sub-issue si usano solo per scomporre lavoro non ancora fatto (vedi `issues.agent.md`)
-4. Nel body della issue di release, elenca (lista puntata, non sub-issue) le issue incluse per riferimento
+4. Nel body della issue di release, elenca (lista puntata, non sub-issue) le issue incluse per riferimento — campo "Issue incluse in questo rilascio" del template
 
 ### Determinazione versione
 
@@ -137,6 +137,30 @@ Per capire quale bump aspettarsi, controlla i commit dall'ultimo tag (`git log <
 ### Branch
 
 Naming standard: `release/<n>_v<major>-<minor>-<patch>` (es. `release/12_v1-1-0`). Segue poi il workflow PR descritto sotto (sezione "Release PR → main").
+
+## Convenzioni PR di release e backmerge
+
+Le PR generate dal workflow di release (`release/*` e `hotfix/*` → `main`) e la PR di back-merge (`main` → `develop`) seguono convenzioni fisse, diverse dalla PR feature/fix standard.
+
+### Release PR → `main`
+
+- Branch: `release/<n>_v<major>-<minor>-<patch>` → `main`
+- Titolo: `release: v<major>.<minor>.<patch>`
+- Body: segue il **PR template standard** (Modifiche, Test eseguiti, Breaking changes, Checklist, Note)
+  - **Modifiche**: elenco di tutti i fix/feat inclusi nella release, con riferimento issue (es. `fix: descrizione (#16)`)
+  - **Note**: nota fissa — *"PR di release: al merge, il workflow `release.yml` tagga automaticamente `v<major>.<minor>.<patch>` e genera la GitHub Release. Richiede back-merge `main` -> `develop` dopo il merge."*
+- Footer: `Closes: #<tutte le issue incluse nella release>, #<issue della release stessa>`
+- Merge: **squash** (regola ruleset `main`)
+
+### Backmerge PR → `develop`
+
+Dopo il merge della release PR (o hotfix PR) su `main`, apri sempre la PR di back-merge per riallineare `develop`.
+
+- Branch: `backmerge/v<major>-<minor>-<patch>-to-develop` → `develop`
+- Titolo: `chore(repo): back-merge main in develop dopo release v<major>.<minor>.<patch>`
+- Body: **non usare il PR template standard** — una riga sola: *"Allinea develop con main dopo il merge della release v<major>.<minor>.<patch> (PR #<numero PR release>)."*
+- Footer: **nessun** `Closes:` — la PR non chiude issue, serve solo a sincronizzare i branch
+- Merge: **merge commit** (regola ruleset `develop`)
 
 ## Workflow PR
 
@@ -262,7 +286,7 @@ gh issue close <n> \
 - Quando apri una PR → il body della PR referenzia già la issue con `Closes: #<n>`
 - Quando la issue non si chiude in automatico dopo il merge → chiusura manuale con commento
 
-**Release PR → `main`**: la PR di release (develop → main) è una squash PR che ingloba più feature. Il body deve includere `Closes: #<n>` per **tutte le issue** coperte dalla release (ricavate dai branch e PR mergiate su develop). Solo così GitHub chiude in automatico tutte le issue al merge su `main`.
+**Release PR e Backmerge PR**: vedi sezione "Convenzioni PR di release e backmerge" sopra per titolo, body e footer da usare.
 
 ## Lingua
 

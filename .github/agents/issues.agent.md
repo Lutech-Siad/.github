@@ -190,7 +190,7 @@ L'utente può fornire i requisiti in vari modi: testo libero, elenco, file markd
    - Per ciascuna: tipo, titolo, scope, repo, milestone, assignee, campi
    - **Relazioni**: l'issue è indipendente o è una sub-issue di un'altra issue (esistente o tra quelle da creare)?
 2. **Inferisci** dai dati disponibili:
-   - **Issue Type**: dal contenuto (migrazione → Migration, bug → Bug, configurazione → Task, ecc.)
+   - **Issue Type**: dal contenuto (migrazione → Migration, bug → Bug, configurazione → Task, ecc.). **Release** (es. "crea issue di release v1.2.0") → tipo `Task`, ma template dedicato `release.yml` (non `task.yml` generico) — vedi sezione "Template issue (dinamici)"
    - **Component**: dal repo o dal contesto (nexusq-frontend → `frontend`, più repo → `multi-projects`)
    - **Activity**: dal tipo di lavoro (codice → `development`, documentazione → `docs`, CI/CD → `infrastructure`, settings → `configuration`)
    - **Priority**: dal contesto (security finding → `High`, governance → `Medium`, miglioramento → `Low`)
@@ -346,6 +346,8 @@ I template sono definiti nei file `.github/ISSUE_TEMPLATE/*.yml` di ciascun repo
      --jq '.content' | base64 -d
    ```
 3. **Usare la struttura del template** (sezioni, ordine, campi) per comporre il body della issue
+
+> **Attenzione**: la relazione template ↔ Issue Type non è sempre 1:1. Il tipo `Task` ha due template: `task.yml` (generico) e `release.yml` (issue di release). Scegliere il file in base al contenuto della richiesta (parola chiave "release"/"rilascio" → `release.yml`), non solo in base al tipo inferito.
 
 Se il template non esiste per il tipo richiesto, segnalare all'utente e chiedere come procedere.
 

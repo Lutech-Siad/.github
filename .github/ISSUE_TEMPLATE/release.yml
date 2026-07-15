@@ -1,0 +1,64 @@
+name: Release
+description: Rilascio di una nuova versione in produzione (release/* -> main)
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **📦 Release**: branch da `develop`, PR di release verso `main` (tag automatico + GitHub Release al merge), poi back-merge `main` -> `develop`.
+
+  - type: textarea
+    id: obiettivo
+    attributes:
+      label: Obiettivo
+      description: Perché esiste questa issue — descrivere la versione da rilasciare
+      placeholder: "Es: Rilasciare in produzione la versione v1.1.0 di nexusq-backend, raccogliendo tutte le feature e fix sviluppati e mergiati su develop."
+    validations:
+      required: true
+
+  - type: input
+    id: versione-target
+    attributes:
+      label: Versione target
+      description: Versione SemVer da rilasciare (senza prefisso "v")
+      placeholder: "1.1.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Passi del processo di release
+      value: |
+        - Creare branch `release/<n>_v<major>-<minor>-<patch>` da `develop`
+        - Aprire PR `release/<n>_v<major>-<minor>-<patch>` -> `main` con `Closes:` per tutte le issue incluse
+        - Al merge, il workflow `release.yml` tagga automaticamente la versione e genera la GitHub Release
+        - Back-merge `main` -> `develop`
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue-incluse
+    attributes:
+      label: Issue incluse in questo rilascio
+      description: Elenco dei numeri delle issue già completate e mergiate su develop che fanno parte di questo rilascio (riferimento, non sub-issue)
+      placeholder: "#16, #19, #22, #24, #26"
+    validations:
+      required: true
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti
+      description: Link a milestone, project o documenti collegati
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Note
+      description: Vincoli, dipendenze o rischi noti del rilascio
+    validations:
+      required: false
