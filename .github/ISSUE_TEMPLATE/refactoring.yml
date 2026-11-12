@@ -7,7 +7,7 @@ body:
     attributes:
       label: Obiettivo
       description: Perché esiste questa issue — descrivere cosa va ristrutturato e perché
-      placeholder: "Es: Eliminare la duplicazione nella gestione delle transazioni DB in ApplicationCore"
+      placeholder: "Esempio: Eliminare la duplicazione nella gestione delle transazioni DB in ApplicationCore"
     validations:
       required: true
 
@@ -63,7 +63,7 @@ body:
     id: riferimenti
     attributes:
       label: Riferimenti
-      description: Link a report, documenti, issue collegate
+      description: Issue Tracker, JIRA, issue collegate, file del repository, fonti esterne (formato in issues.instructions.md §6)
     validations:
       required: true
 
@@ -71,6 +71,6 @@ body:
     id: note
     attributes:
       label: Note
-      description: Branch strategy, vincoli, dipendenze, stato
+      description: Vincoli, dipendenze, stato
     validations:
       required: false

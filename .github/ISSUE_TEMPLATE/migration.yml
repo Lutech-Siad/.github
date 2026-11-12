@@ -1,19 +1,13 @@
 name: Migration
-description: Migrazione architetturale significativa (framework, libreria, infrastruttura)
+description: Cambio di versione o di tecnologia (framework, libreria, infrastruttura)
 labels: []
 body:
-  - type: markdown
-    attributes:
-      value: |
-        > **Migrazione** = cambio architetturale significativo, multi-version o multi-componente.
-        > Per aggiornamenti incrementali (una sola major version), usare il tipo **Task** o **Refactoring**.
-
   - type: textarea
     id: obiettivo
     attributes:
       label: Obiettivo
       description: Perché esiste questa issue — descrivere la migrazione e il contesto
-      placeholder: "Es: Migrare il frontend da Angular 10 a Angular 18"
+      placeholder: "Esempio: Migrare il frontend da Angular 10 a Angular 18"
     validations:
       required: true
 
@@ -22,7 +16,7 @@ body:
     attributes:
       label: Versione attuale
       description: Versione o stack attualmente in uso
-      placeholder: "Es: Angular 10.2, .NET Framework 4.8"
+      placeholder: "Esempio: Angular 10.2, .NET Framework 4.8"
     validations:
       required: true
 
@@ -31,7 +25,7 @@ body:
     attributes:
       label: Versione target
       description: Versione o stack di destinazione
-      placeholder: "Es: Angular 18, .NET 10"
+      placeholder: "Esempio: Angular 18, .NET 10"
     validations:
       required: true
 
@@ -42,7 +36,7 @@ body:
       description: Cosa va migrato — piano step-by-step
       placeholder: |
         - Analisi impatto e breaking changes
-        - Step intermedi (es. Angular 10 → 11 → ... → 18)
+        - Step intermedi (per esempio Angular 10 → 11 → ... → 18)
         - Aggiornamento dipendenze
         - Test di validazione per ogni step
     validations:
@@ -68,7 +62,7 @@ body:
       placeholder: |
         - Branch develop resta intatto fino al merge finale
         - Backup database prima del deploy
-        - Revert tag vX.Y.Z se necessario
+        - Tornare al tag v<major>.<minor>.<patch> precedente se necessario
     validations:
       required: true
 
@@ -76,7 +70,7 @@ body:
     id: riferimenti
     attributes:
       label: Riferimenti
-      description: Link a guide di migrazione ufficiali, report, documenti, issue collegate
+      description: Issue Tracker, JIRA, issue collegate, file del repository, fonti esterne (formato in issues.instructions.md §6)
     validations:
       required: true
 
@@ -84,6 +78,6 @@ body:
     id: note
     attributes:
       label: Note
-      description: Branch strategy, vincoli temporali, dipendenze
+      description: Vincoli temporali, dipendenze, stato
     validations:
       required: false

@@ -1,5 +1,5 @@
 name: Bug
-description: Segnalazione di un difetto funzionale o comportamento inatteso
+description: Difetto in qualcosa non ancora in produzione, trovato sviluppando o collaudando un lavoro nuovo
 labels: []
 body:
   - type: textarea
@@ -7,7 +7,7 @@ body:
     attributes:
       label: Obiettivo
       description: Perché esiste questa issue — descrivere il difetto riscontrato
-      placeholder: "Es: L'utente riceve un errore 500 quando salva un'offerta con righe gas miste"
+      placeholder: "Esempio: L'utente riceve un errore 500 quando salva un'offerta con righe gas miste"
     validations:
       required: true
 
@@ -28,7 +28,7 @@ body:
   - type: textarea
     id: comportamento-atteso
     attributes:
-      label: Comportamento atteso vs attuale
+      label: Comportamento atteso e attuale
       description: Cosa dovrebbe succedere e cosa succede invece
       placeholder: |
         **Atteso**: L'offerta viene salvata correttamente
@@ -45,7 +45,6 @@ body:
         - develop
         - dev
         - test
-        - prod
     validations:
       required: true
 
@@ -53,8 +52,8 @@ body:
     id: impatto
     attributes:
       label: Impatto
-      description: Conseguenze del bug (utenti bloccati, dati inconsistenti, workaround necessario, ecc.)
-      placeholder: "Es: Gli utenti non possono salvare offerte con mix gas — workaround: creare righe singole"
+      description: Conseguenze del bug (utenti bloccati, dati inconsistenti, workaround necessario)
+      placeholder: "Esempio: Gli utenti non possono salvare offerte con mix gas — workaround: creare righe singole"
     validations:
       required: false
 
@@ -64,7 +63,7 @@ body:
       label: Scope
       description: Cosa va fatto per risolvere il bug
       placeholder: |
-        - Identificare la causa root
+        - Identificare la causa
         - Correggere il comportamento
         - Aggiungere test di regressione
     validations:
@@ -74,8 +73,8 @@ body:
     id: riferimenti
     attributes:
       label: Riferimenti
-      description: Link a report, documenti, issue collegate
-      placeholder: "Es: Segnalato in #12, log errore in Application Insights"
+      description: Issue Tracker, JIRA, issue collegate, file del repository, fonti esterne (formato in issues.instructions.md §6)
+      placeholder: "Esempio: Segnalato in #12, log errore in Application Insights"
     validations:
       required: true
 
@@ -83,6 +82,6 @@ body:
     id: note
     attributes:
       label: Note
-      description: Branch strategy, vincoli, dipendenze, stato
+      description: Vincoli, dipendenze, stato
     validations:
       required: false

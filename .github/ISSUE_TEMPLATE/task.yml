@@ -1,5 +1,5 @@
 name: Task
-description: Attività operativa generica (configurazione, documentazione, infrastruttura)
+description: Attività operativa (configurazione, documentazione, infrastruttura) e tutto ciò che non rientra negli altri tipi
 labels: []
 body:
   - type: textarea
@@ -7,7 +7,7 @@ body:
     attributes:
       label: Obiettivo
       description: Perché esiste questa issue — descrivere l'attività da svolgere
-      placeholder: "Es: Configurare i secrets di GitHub Actions per il deploy..."
+      placeholder: "Esempio: Configurare i secrets di GitHub Actions per il deploy..."
     validations:
       required: true
 
@@ -27,7 +27,7 @@ body:
     id: riferimenti
     attributes:
       label: Riferimenti
-      description: Link a report, documenti, issue collegate
+      description: Issue Tracker, JIRA, issue collegate, file del repository, fonti esterne (formato in issues.instructions.md §6)
     validations:
       required: true
 
@@ -35,6 +35,6 @@ body:
     id: note
     attributes:
       label: Note
-      description: Branch strategy, vincoli, dipendenze, stato
+      description: Vincoli, dipendenze, stato
     validations:
       required: false

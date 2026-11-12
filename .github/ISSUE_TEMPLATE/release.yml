@@ -1,18 +1,13 @@
 name: Release
-description: Rilascio di una nuova versione in produzione (release/* -> main)
+description: Rilascio di una nuova versione in produzione (release → main)
 labels: []
 body:
-  - type: markdown
-    attributes:
-      value: |
-        > **📦 Release**: branch da `develop`, PR di release verso `main` (tag automatico + GitHub Release al merge), poi back-merge `main` -> `develop`.
-
   - type: textarea
     id: obiettivo
     attributes:
       label: Obiettivo
       description: Perché esiste questa issue — descrivere la versione da rilasciare
-      placeholder: "Es: Rilasciare in produzione la versione v1.1.0 di nexusq-backend, raccogliendo tutte le feature e fix sviluppati e mergiati su develop."
+      placeholder: "Esempio: Rilasciare in produzione la versione v1.1.0 di nexusq-backend, raccogliendo tutte le feature e fix sviluppati e mergiati su develop."
     validations:
       required: true
 
@@ -20,8 +15,8 @@ body:
     id: versione-target
     attributes:
       label: Versione target
-      description: Versione SemVer da rilasciare (senza prefisso "v")
-      placeholder: "1.1.0"
+      description: Versione SemVer da rilasciare, con il prefisso v
+      placeholder: "v1.1.0"
     validations:
       required: true
 
@@ -31,19 +26,19 @@ body:
       label: Scope
       description: Passi del processo di release
       value: |
-        - Creare branch `release/<n>_v<major>-<minor>-<patch>` da `develop`
-        - Aprire PR `release/<n>_v<major>-<minor>-<patch>` -> `main` con `Closes:` per tutte le issue incluse
-        - Al merge, il workflow `release.yml` tagga automaticamente la versione e genera la GitHub Release
-        - Back-merge `main` -> `develop`
+        - Rilasciare con il custom agent `gitflow` secondo la procedura di `git.instructions.md §5` (branch, pull request di release, backmerge)
+        - Verificare tag e GitHub Release creati dal workflow dopo il merge
     validations:
       required: true
 
   - type: textarea
     id: issue-incluse
     attributes:
-      label: Issue incluse in questo rilascio
+      label: Issue incluse
       description: Elenco dei numeri delle issue già completate e mergiate su develop che fanno parte di questo rilascio (riferimento, non sub-issue)
-      placeholder: "#16, #19, #22, #24, #26"
+      placeholder: |
+        - #16 — <titolo della issue>
+        - #19 — <titolo della issue>
     validations:
       required: true
 
@@ -51,7 +46,7 @@ body:
     id: riferimenti
     attributes:
       label: Riferimenti
-      description: Link a milestone, project o documenti collegati
+      description: Issue Tracker, JIRA, issue collegate, file del repository, fonti esterne (formato in issues.instructions.md §6)
     validations:
       required: true
 

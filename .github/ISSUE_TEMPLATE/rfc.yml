@@ -1,5 +1,5 @@
 name: RFC
-description: Request for Comments — proposta tecnica o architetturale da discutere
+description: Proposta di modifica senza documento di CR, da discutere e decidere
 labels: []
 body:
   - type: textarea
@@ -7,7 +7,7 @@ body:
     attributes:
       label: Obiettivo
       description: Perché esiste questa issue — descrivere la proposta e il contesto decisionale
-      placeholder: "Es: Proposta di adottare Redis come cache distribuita per ridurre i tempi di risposta delle API"
+      placeholder: "Esempio: Proposta di adottare Redis come cache distribuita per ridurre i tempi di risposta delle API"
     validations:
       required: true
 
@@ -17,9 +17,9 @@ body:
       label: Scope
       description: Cosa va valutato, analizzato o prototipato per validare la decisione
       placeholder: |
-        - PoC con benchmark
+        - Prototipo con benchmark
         - Review architetturale
-        - Documentazione decisione in ADR
+        - Documentare la decisione presa
     validations:
       required: true
 
@@ -76,7 +76,7 @@ body:
     id: riferimenti
     attributes:
       label: Riferimenti
-      description: Link a documentazione, benchmark, RFC esterne, issue collegate
+      description: Issue Tracker, JIRA, issue collegate, file del repository, fonti esterne (formato in issues.instructions.md §6)
     validations:
       required: true
 
