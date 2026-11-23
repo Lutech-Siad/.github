@@ -257,16 +257,36 @@ foreach ($repository in $Repositories) {
         if ($reasons.Count -gt 0) {
             $Findings += [pscustomobject]@{ Repository = $repository; Kind = 'pull request'; Number = [int] $pull.number; Title = $pull.title; Url = $pull.url; Reasons = ($reasons -join '; ') }
         }
+
+        # Stato della pull request nei project: aperta → In Review, mergiata o chiusa → Done
+        $pullStatus = if ($pull.state -eq 'OPEN') { 'In Review' } else { 'Done' }
+        foreach ($project in $Projects.Values) {
+            $item = $project.Items | Where-Object { $_.content.type -eq 'PullRequest' -and $_.content.number -eq [int] $pull.number -and ($_.repository -eq $repositoryUrl -or "https://github.com/$($_.content.repository)" -eq $repositoryUrl) } | Select-Object -First 1
+            if (-not $item) { continue }
+            if ([string] $item.status -ne $pullStatus) {
+                $Changes += [pscustomobject]@{ Repository = $repository; Number = [int] $pull.number; Project = $project.Title; Field = 'Status (pull request)'; From = [string] $item.status; To = $pullStatus; ItemId = $item.id; ProjectId = $project.Id; FieldId = $project.StatusFieldId; OptionId = $project.StatusOptions[$pullStatus]; Text = $null; IssueNodeId = $null }
+            }
+        }
     }
 }
 
 # ---------- Applicazione ----------
 if ($Apply -and $Changes.Count -gt 0) {
     Write-Host "Applicazione di $($Changes.Count) modifiche ai project…"
+    $written = 0
     foreach ($change in $Changes) {
-        if ($change.Field -eq 'Status') {
+        # GitHub limita le scritture ravvicinate (limite secondario): una pausa fra una e l'altra e un nuovo tentativo dopo un minuto.
+        Start-Sleep -Milliseconds 800
+        if ($change.Field -like 'Status*') {
             if (-not $change.OptionId) { Write-Warning "Project $($change.Project): opzione «$($change.To)» assente, salto #$($change.Number)"; continue }
-            [void] (Invoke-Gh @('project', 'item-edit', '--project-id', $change.ProjectId, '--id', $change.ItemId, '--field-id', $change.FieldId, '--single-select-option-id', $change.OptionId))
+            $arguments = @('project', 'item-edit', '--project-id', $change.ProjectId, '--id', $change.ItemId, '--field-id', $change.FieldId, '--single-select-option-id', $change.OptionId)
+            try { [void] (Invoke-Gh $arguments) }
+            catch {
+                if ("$_" -match 'rate limit') { Write-Host 'Limite API raggiunto: attendo 90 secondi…'; Start-Sleep -Seconds 90; [void] (Invoke-Gh $arguments) }
+                else { Write-Warning "Status non scritto su #$($change.Number) ($($change.Project)): $_"; continue }
+            }
+            $written++
+            if ($written % 50 -eq 0) { Write-Host "  $written modifiche scritte…" }
         }
         else {
             $escaped = $change.Text -replace '"', '\"'
