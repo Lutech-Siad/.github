@@ -8,7 +8,7 @@ applyTo: "**"
 | | |
 |---|---|
 | **Creato** | 29/05/2026 |
-| **Aggiornato** | 12/11/2026 |
+| **Aggiornato** | 23/11/2026 |
 | **Revisione** | 6 |
 
 Regole per branch, commit, versioni, release e milestone. Le procedure (bozza, conferma, esecuzione) sono nel custom agent `gitflow`. Glossario, lingua, repository e persone: [`docs/conventions.md`](../../docs/conventions.md). Formato delle pull request: [`pull-requests.instructions.md`](pull-requests.instructions.md). Issue: [`issues.instructions.md`](issues.instructions.md).

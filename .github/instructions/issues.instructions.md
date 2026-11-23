@@ -7,8 +7,8 @@ description: "Use when: creating, drafting, editing or reviewing a GitHub issue,
 | | |
 |---|---|
 | **Creato** | 11/11/2026 |
-| **Aggiornato** | 12/11/2026 |
-| **Revisione** | 3 |
+| **Aggiornato** | 23/11/2026 |
+| **Revisione** | 4 |
 
 Regole per tipo, campi, project, milestone, titolo, corpo, relazioni e commenti delle issue. La procedura (inferenza, domande, bozza, creazione) è nel custom agent `issues`. Milestone: [`git.instructions.md §6`](git.instructions.md). Glossario, lingua, label e persone: [`docs/conventions.md`](../../docs/conventions.md).
 
@@ -68,6 +68,21 @@ Assegnatario: chi crea la issue, salvo indicazione diversa. Label: nessuna, salv
 | Sviluppo progettuale | il project di sviluppo attivo (oggi `NexusQ - Migration & Security` e `NexusQ - CRM`); se ne esistono più di uno, si chiede quale |
 
 I project `[TEMPLATE] …` non ricevono issue. Issue e sub-issue di uno stesso lavoro stanno nello stesso project. Il repository `.github` ospita solo issue di governance dell'organizzazione: mai issue di progetto o di prodotto.
+
+### Stato nel project
+
+Lo Status del project è **derivato** dai fatti su GitHub e non si imposta a mano, con l'unica eccezione di `Blocked`.
+
+| Status | Quando | Chi lo imposta |
+|---|---|---|
+| `Backlog` | issue creata | automazione del project |
+| `In Progress` | branch creato | `gitflow` |
+| `In Review` | pull request aperta | `gitflow` |
+| `Merged` | pull request mergiata e issue ancora aperta: lavoro finito, non rilasciato | Warden |
+| `Done` | issue chiusa, cioè lavoro su `main` | automazione del project |
+| `Blocked` | commento `**Blocco:**` sulla issue (vedi §8) | chi scrive il commento |
+
+Il campo di project **Rilasciato in** elenca gli ambienti in cui il lavoro della issue è installato (`dev`, `test`, `prod`, separati da virgola), derivato da Warden dai deployment del repository ([`docs/conventions.md §7`](../../docs/conventions.md)): nessuno lo compila a mano. Un lavoro è installato in un ambiente quando il commit di merge della sua pull request è un antenato del commit registrato nel deployment attivo di quell'ambiente.
 
 ## 4. Titolo
 

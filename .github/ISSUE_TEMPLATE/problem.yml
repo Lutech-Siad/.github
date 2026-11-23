@@ -19,7 +19,7 @@ body:
       placeholder: |
         1. Accedere alla sezione Offerte
         2. Filtrare per date > 1 anno
-        3. → La pagina impiega 30+ secondi a caricare
+        3. → La pagina impiega oltre 30 secondi a caricare
     validations:
       required: false
 
@@ -29,8 +29,8 @@ body:
       label: Comportamento atteso e attuale
       description: Cosa dovrebbe succedere e cosa succede invece
       placeholder: |
-        **Atteso**: La lista offerte si carica in < 3 secondi
-        **Attuale**: Timeout dopo 30 secondi con volumi > 10.000 record
+        **Atteso**: La lista offerte si carica in meno di 3 secondi
+        **Attuale**: Timeout dopo 30 secondi con oltre 10.000 record
     validations:
       required: false
 

@@ -41,8 +41,8 @@ body:
       label: Criteri di accettazione
       description: Condizioni che devono essere vere perché la proposta sia considerata validata (se applicabile)
       placeholder: |
-        - [ ] PoC dimostra performance < 100ms
-        - [ ] Costi mensili stimati < budget
+        - [ ] Il prototipo risponde sotto i 100 millisecondi
+        - [ ] Costi mensili stimati entro il budget
         - [ ] Approvazione team in review
     validations:
       required: false

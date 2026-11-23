@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Creato** | 29/05/2026 |
-| **Aggiornato** | 12/11/2026 |
-| **Revisione** | 7 |
+| **Aggiornato** | 23/11/2026 |
+| **Revisione** | 8 |
 
 > Indice delle convenzioni dell'organizzazione `Lutech-Siad` e convenzioni non legate a un compito specifico.
 > Ogni regola vive in un solo file: qui trovi dove. Gli altri file rimandano, non copiano.
@@ -20,7 +20,7 @@
 | Pull request: titolo, corpo, reviewer, footer | [`.github/instructions/pull-requests.instructions.md`](../.github/instructions/pull-requests.instructions.md) |
 | File di piano | [`.github/instructions/plan-files.instructions.md`](../.github/instructions/plan-files.instructions.md) |
 | Procedure guidate (proposta, conferma, esecuzione) | custom agent in [`.github/agents/`](../.github/agents/): `gitflow`, `issues`, `backlog`, `planning` |
-| Tutto il resto (glossario, lingua, persone, repository e loro custom properties, label, ambienti, struttura di `.github/`, passaggio fra custom agent, consegna fra sessioni, domande all'utente) | questo documento |
+| Tutto il resto (glossario, lingua, persone, repository e loro custom properties, label, ambienti, struttura di `.github/`, passaggio fra custom agent, consegna fra sessioni, domande all'utente, fonti esterne) | questo documento |
 
 ---
 
@@ -36,7 +36,7 @@ Termini di GitHub Copilot in VS Code. Si usano sempre questi, in inglese e invar
 | **handoff** | Pulsante a fine risposta che passava la conversazione a un altro agent. Esisteva solo nell'harness Local di VS Code, deprecato: non si usa (§9). |
 | **instructions** | File `.instructions.md` con regole, senza procedura. Copilot lo carica sempre (`applyTo: "**"`), per file (`applyTo` con pattern) o a richiesta (in base alla `description`). |
 
-In Claude Code i nomi cambiano: il custom agent usato in conversazione corrisponde alla **skill**, il subagent al **subagent**, anche per il passaggio fra agent di §9. Il dettaglio è nel piano del plugin Claude Code.
+In Claude Code i nomi cambiano: il custom agent usato in conversazione corrisponde alla **skill**, il subagent al **subagent**; il passaggio fra agent di §9 corrisponde a un subagent o a una skill che ne richiama un'altra. Il dettaglio è nel piano del plugin Claude Code.
 
 ---
 
@@ -110,10 +110,14 @@ Le label non duplicano mai i campi delle issue o dei project.
 
 ## 7. Ambienti
 
-| Regola | Dettaglio |
-|---|---|
-| Case | minuscolo |
-| Nomi | `develop`, `dev`, `test`, `prod` |
+| Ambiente | Cosa ospita | Ref registrata |
+|---|---|---|
+| `develop` | integrazione continua del branch `develop` | nessuna: non è un'installazione |
+| `dev` | installazione di sviluppo, anche di un branch di lavoro | branch o commit |
+| `test` | collaudo della release in corso | tag della versione, o branch di release prima del tag |
+| `prod` | produzione | tag della versione |
+
+Nomi in minuscolo. Ogni installazione in `dev`, `test` o `prod` si registra come **deployment** GitHub nell'environment omonimo del repository, con la ref installata: è l'unica fonte di «cosa c'è in quale ambiente». La pagina Deployments del repository tiene lo storico e l'installazione attiva di ogni ambiente; il project mostra lo stesso dato nel campo «Rilasciato in», derivato da Warden ([`issues.instructions.md §3`](../.github/instructions/issues.instructions.md)). Chi installa registra subito dopo, con il custom agent `gitflow` (sezione Deployment).
 
 ---
 
@@ -238,3 +242,9 @@ Ogni domanda ha numero, titolo, testo con le opzioni se ci sono, e risposta cons
 Il round finisce quando non resta nulla di sottinteso, e l'agent non procede finché l'utente non ha risposto. Quando l'harness mostra le domande nella propria interfaccia, come fa Copilot, il contenuto resta questo: numero, titolo, opzioni, consiglio.
 
 L'idea viene dalla skill `grilling` di [Matt Pocock](https://github.com/mattpocock/skills).
+
+---
+
+## 11. Fonti esterne
+
+Quando una regola, una procedura o una skill riprende un'idea da fuori (un repository di skill, un articolo, una documentazione), il file che la contiene cita la fonte accanto alla regola, con autore e link, come fa §10 per `grilling`. Vale anche per le skill copiate o adattate nei repository applicativi: la fonte sta nel `SKILL.md`, subito dopo la tabella delle date.
