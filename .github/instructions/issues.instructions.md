@@ -82,7 +82,7 @@ Lo Status del project è **derivato** dai fatti su GitHub e non si imposta a man
 | `Done` | issue chiusa, cioè lavoro su `main` | automazione del project |
 | `Blocked` | commento `**Blocco:**` sulla issue (vedi §8) | chi scrive il commento |
 
-Il campo di project **Rilasciato in** elenca gli ambienti in cui il lavoro della issue è installato (`dev`, `test`, `prod`, separati da virgola), derivato da Warden dai deployment del repository ([`docs/conventions.md §7`](../../docs/conventions.md)): nessuno lo compila a mano. Un lavoro è installato in un ambiente quando il commit di merge della sua pull request è un antenato del commit registrato nel deployment attivo di quell'ambiente.
+Il campo di organizzazione **Released In** elenca gli ambienti in cui il lavoro della issue è installato (`dev`, `test`, `prod`, separati da virgola), derivato da Warden dai deployment del repository e visibile anche nei project ([`docs/conventions.md §7`](../../docs/conventions.md)): nessuno lo compila a mano. Un lavoro è installato in un ambiente quando il commit di merge della sua pull request è un antenato del commit registrato nel deployment attivo di quell'ambiente.
 
 ## 4. Titolo
 

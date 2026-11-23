@@ -117,7 +117,7 @@ Le label non duplicano mai i campi delle issue o dei project.
 | `test` | collaudo della release in corso | tag della versione, o branch di release prima del tag |
 | `prod` | produzione | tag della versione |
 
-Nomi in minuscolo. Ogni installazione in `dev`, `test` o `prod` si registra come **deployment** GitHub nell'environment omonimo del repository, con la ref installata: è l'unica fonte di «cosa c'è in quale ambiente». La pagina Deployments del repository tiene lo storico e l'installazione attiva di ogni ambiente; il project mostra lo stesso dato nel campo «Rilasciato in», derivato da Warden ([`issues.instructions.md §3`](../.github/instructions/issues.instructions.md)). Chi installa registra subito dopo, con il custom agent `gitflow` (sezione Deployment).
+Nomi in minuscolo. Ogni installazione in `dev`, `test` o `prod` si registra come **deployment** GitHub nell'environment omonimo del repository, con la ref installata: è l'unica fonte di «cosa c'è in quale ambiente». La pagina Deployments del repository tiene lo storico e l'installazione attiva di ogni ambiente; la issue mostra lo stesso dato nel campo di organizzazione «Released In», derivato da Warden e visibile anche nei project ([`issues.instructions.md §3`](../.github/instructions/issues.instructions.md)). Chi installa registra subito dopo, con il custom agent `gitflow` (sezione Deployment).
 
 ---
 
@@ -139,9 +139,12 @@ docs/
 └── conventions.md            (questo documento)
 profile/
 └── README.md                 (pagina dell'organizzazione)
+warden/
+├── Warden.ps1                (controllore: Status e «Released In» derivati, report delle non conformità)
+└── reports/                  (report generati, ignorati da git)
 ```
 
-Agent, instructions e template valgono per tutti i repository dell'organizzazione.
+Agent, instructions e template valgono per tutti i repository dell'organizzazione. Warden si lancia con `pwsh -NoProfile -File warden/Warden.ps1`, in sola lettura, e con `-Apply` per scrivere lo Status nei project e «Released In» sulle issue.
 
 ### Repository applicativi
 
