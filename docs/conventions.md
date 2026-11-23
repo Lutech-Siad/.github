@@ -4,7 +4,7 @@
 |---|---|
 | **Creato** | 29/05/2026 |
 | **Aggiornato** | 12/11/2026 |
-| **Revisione** | 6 |
+| **Revisione** | 7 |
 
 > Indice delle convenzioni dell'organizzazione `Lutech-Siad` e convenzioni non legate a un compito specifico.
 > Ogni regola vive in un solo file: qui trovi dove. Gli altri file rimandano, non copiano.
@@ -20,7 +20,7 @@
 | Pull request: titolo, corpo, reviewer, footer | [`.github/instructions/pull-requests.instructions.md`](../.github/instructions/pull-requests.instructions.md) |
 | File di piano | [`.github/instructions/plan-files.instructions.md`](../.github/instructions/plan-files.instructions.md) |
 | Procedure guidate (proposta, conferma, esecuzione) | custom agent in [`.github/agents/`](../.github/agents/): `gitflow`, `issues`, `backlog`, `planning` |
-| Tutto il resto (glossario, lingua, persone, repository e loro custom properties, label, ambienti, struttura di `.github/`, passaggio fra custom agent) | questo documento |
+| Tutto il resto (glossario, lingua, persone, repository e loro custom properties, label, ambienti, struttura di `.github/`, passaggio fra custom agent, consegna fra sessioni, domande all'utente) | questo documento |
 
 ---
 
@@ -214,3 +214,27 @@ Nell'harness Copilot di VS Code non esistono handoff e non si cambia agent dentr
 | Lavoro autonomo | l'esecuzione di un piano si invoca allo stesso modo sull'agent built-in `Agent` |
 
 Ogni custom agent ha `agent` fra i suoi tools. Il frontmatter non usa `handoffs`: esisteva solo nell'harness Local, deprecato e in rimozione a febbraio 2027.
+
+### Consegna fra sessioni
+
+Quando una conversazione si interrompe (contesto pieno, fine giornata, cambio di persona) e il lavoro deve proseguire in un'altra sessione, l'utente chiede la consegna («prepara la consegna»). L'agent scrive sulla issue un commento `**Stato:**` ([`issues.instructions.md §8`](../.github/instructions/issues.instructions.md)) con tre parti: le decisioni prese nella conversazione, cosa resta da fare, e in coda il prompt pronto per riprendere, con l'agent da usare («apri `planning` e scrivi: …»). Mai automatica: i commenti li scrivono le persone quando serve. Se c'è un piano, le decisioni vanno anche nel suo Registro delle decisioni.
+
+---
+
+## 10. Domande all'utente
+
+Quando un agent ha bisogno di decisioni, le chiede a **round**: tutte le domande che si possono decidere adesso, insieme, e aspetta le risposte prima del round successivo. Una domanda che dipende da un'altra ancora aperta va al round dopo. I **fatti** li cerca l'agent, nel repository, su GitHub o con i comandi: all'utente si chiedono solo le **decisioni**.
+
+Ogni domanda ha numero, titolo, testo con le opzioni se ci sono, e risposta consigliata con il motivo in una riga. Le domande sono formulate in modo che «sì» accetti la risposta consigliata.
+
+```
+**D1 · <titolo>**: <domanda, con le opzioni>
+→ Consiglio: <risposta consigliata, perché>
+
+**D2 · <titolo>**: …
+→ Consiglio: …
+```
+
+Il round finisce quando non resta nulla di sottinteso, e l'agent non procede finché l'utente non ha risposto. Quando l'harness mostra le domande nella propria interfaccia, come fa Copilot, il contenuto resta questo: numero, titolo, opzioni, consiglio.
+
+L'idea viene dalla skill `grilling` di [Matt Pocock](https://github.com/mattpocock/skills).
