@@ -99,6 +99,42 @@ function Repair-Body {
     return [pscustomobject]@{ Text = ($output -join "`n"); Applied = @($applied | Sort-Object -Unique) }
 }
 
+function Complete-PullRequestBody {
+    # Porta il corpo di una pull request alle quattro sezioni del template nell'ordine giusto, con «Non applicabile» dove manca il contenuto, e il footer in coda.
+    param([string] $Text, [string] $Title, [int] $IssueNumber)
+    $applied = [System.Collections.Generic.List[string]]::new()
+    $lines = if ($Text) { $Text -split "`r?`n" } else { @() }
+    $footer = [System.Collections.Generic.List[string]]::new()
+    $sections = [ordered]@{}
+    $preamble = [System.Collections.Generic.List[string]]::new()
+    $current = $null
+    foreach ($line in $lines) {
+        if ($line -match '^\s*(Closes|Refs):?\s+#\d+\s*$') { $footer.Add(($line.Trim() -replace '^(Closes|Refs):?\s+', '$1: ')); continue }
+        if ($line -match '^##\s+(.+?)\s*$') { $current = $Matches[1]; if (-not $sections.Contains($current)) { $sections[$current] = [System.Collections.Generic.List[string]]::new() }; continue }
+        if ($current) { $sections[$current].Add($line) } else { $preamble.Add($line) }
+    }
+    $canonical = @('Modifiche', 'Test eseguiti', 'Breaking changes', 'Note')
+    $output = [System.Collections.Generic.List[string]]::new()
+    foreach ($name in $canonical) {
+        $content = if ($sections.Contains($name)) { ($sections[$name] -join "`n").Trim() } else { '' }
+        if (-not $content) {
+            if ($name -eq 'Modifiche') { $content = ($preamble -join "`n").Trim(); if (-not $content) { $content = "- $Title" } }
+            else { $content = 'Non applicabile' }
+            $applied.Add("sezione $name aggiunta")
+        }
+        $output.Add("## $name"); $output.Add(''); $output.Add($content); $output.Add('')
+    }
+    foreach ($name in $sections.Keys) {
+        if ($name -in $canonical) { continue }
+        $content = ($sections[$name] -join "`n").Trim()
+        if (-not $content -or $content -eq 'Non applicabile' -or $content -eq 'N/A') { $applied.Add("sezione $name vuota rimossa"); continue }
+        $output.Add("## $name"); $output.Add(''); $output.Add($content); $output.Add('')
+    }
+    if ($footer.Count -eq 0 -and $IssueNumber -gt 0) { $footer.Add("Refs: #$IssueNumber"); $applied.Add('footer Refs aggiunto dal nome del branch') }
+    foreach ($line in $footer) { $output.Add($line) }
+    return [pscustomobject]@{ Text = (($output -join "`n").Trim() + "`n"); Applied = @($applied) }
+}
+
 function Get-IssueNumbersFromText {
     param([string] $Text, [string] $Keyword)
     $numbers = @()
@@ -153,6 +189,7 @@ $Report = [System.Text.StringBuilder]::new()
 $Changes = @()
 $Findings = @()
 $TextFixes = @()
+$MilestoneFixes = @()
 $Now = Get-Date
 [void] $Report.AppendLine("# Warden: rapporto del $($Now.ToString('dd/MM/yyyy HH:mm'))")
 [void] $Report.AppendLine()
@@ -307,7 +344,14 @@ foreach ($repository in $Repositories) {
         if (-not $pull.milestone -and $repository -ne '.github') { $reasons += 'milestone mancante' }
         if ($FixText) {
             $repair = Repair-Body -Text $body -AllowCheckboxes $false -IsPullRequest $true
-            if ($repair.Text -ne $body) { $TextFixes += [pscustomobject]@{ Repository = $repository; Kind = 'pull request'; Number = [int] $pull.number; Url = $pull.url; Applied = ($repair.Applied -join '; '); Text = $repair.Text } }
+            $branchIssue = if ($pull.headRefName -match '^(feature|fix|hotfix|release|backmerge)/(\d+)_') { [int] $Matches[2] } else { 0 }
+            $completed = Complete-PullRequestBody -Text $repair.Text -Title $pull.title -IssueNumber $branchIssue
+            $appliedAll = @($repair.Applied) + @($completed.Applied)
+            if ($completed.Text.Trim() -ne $body.Trim()) { $TextFixes += [pscustomobject]@{ Repository = $repository; Kind = 'pull request'; Number = [int] $pull.number; Url = $pull.url; Applied = ($appliedAll -join '; '); Text = $completed.Text } }
+            if (-not $pull.milestone -and $branchIssue -gt 0) {
+                $linkedIssue = $issues | Where-Object { [int] $_.number -eq $branchIssue } | Select-Object -First 1
+                if ($linkedIssue -and $linkedIssue.milestone) { $MilestoneFixes += [pscustomobject]@{ Repository = $repository; Number = [int] $pull.number; Url = $pull.url; Milestone = $linkedIssue.milestone.title } }
+            }
         }
         if ($reasons.Count -gt 0) {
             $Findings += [pscustomobject]@{ Repository = $repository; Kind = 'pull request'; Number = [int] $pull.number; Title = $pull.title; Url = $pull.url; Reasons = ($reasons -join '; ') }
@@ -368,6 +412,14 @@ if ($Apply -and $FixText -and $TextFixes.Count -gt 0) {
     }
     Remove-Item $bodyFile -ErrorAction SilentlyContinue
 }
+if ($Apply -and $FixText -and $MilestoneFixes.Count -gt 0) {
+    Write-Host "Milestone di $($MilestoneFixes.Count) pull request dalla issue collegata…"
+    foreach ($fix in $MilestoneFixes) {
+        Start-Sleep -Milliseconds 800
+        try { [void] (Invoke-Gh @('pr', 'edit', "$($fix.Number)", '--repo', "$Organization/$($fix.Repository)", '--milestone', $fix.Milestone)) }
+        catch { Write-Warning "Milestone non scritta su pull request #$($fix.Number) ($($fix.Repository)): $_" }
+    }
+}
 
 # ---------- Report ----------
 if ($FixText) {
@@ -379,6 +431,7 @@ if ($FixText) {
         [void] $Report.AppendLine('|---|---|---|')
         foreach ($fix in $TextFixes | Sort-Object Repository, Kind, Number) { [void] $Report.AppendLine("| $($fix.Repository) | $($fix.Kind) [#$($fix.Number)]($($fix.Url)) | $($fix.Applied) |") }
     }
+    foreach ($fix in $MilestoneFixes | Sort-Object Repository, Number) { [void] $Report.AppendLine("| $($fix.Repository) | pull request [#$($fix.Number)]($($fix.Url)) | milestone ``$($fix.Milestone)`` dalla issue collegata |") }
     [void] $Report.AppendLine()
 }
 [void] $Report.AppendLine('## Stato e ambienti: modifiche ' + $(if ($Apply) { 'applicate' } else { 'da applicare' }))
