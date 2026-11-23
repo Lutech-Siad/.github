@@ -15,6 +15,11 @@ Repository da controllare, senza organizzazione. Predefinito: nexusq-backend, ne
 .PARAMETER Apply
 Scrive su GitHub lo Status e il campo «Released In» calcolati.
 
+.PARAMETER FixText
+Calcola le correzioni meccaniche al corpo di issue e pull request (intestazioni ### → ##, «Obbiettivo», «->», «Jira»,
+«N/A», checkbox → elenco, righe Parent → Riferimenti, sezione Checklist delle pull request) e le elenca nel report;
+con -Apply le scrive.
+
 .PARAMETER ClonesRoot
 Cartella che contiene i cloni locali dei repository applicativi, usati per il calcolo degli antenati.
 
@@ -26,6 +31,7 @@ pwsh -NoProfile -File warden/Warden.ps1 -Apply
 param(
     [string[]] $Repositories = @('nexusq-backend', 'nexusq-frontend', '.github'),
     [switch] $Apply,
+    [switch] $FixText,
     [string] $ClonesRoot = 'C:\Projects\SIAD\nexusq',
     [string] $ReportsDirectory = (Join-Path $PSScriptRoot 'reports')
 )
@@ -51,6 +57,46 @@ function Get-JsonFromGh {
     $text = Invoke-Gh $Arguments
     if ([string]::IsNullOrWhiteSpace($text)) { return @() }
     return $text | ConvertFrom-Json -Depth 20
+}
+
+function Repair-Body {
+    # Correzioni meccaniche al corpo, fuori dai blocchi di codice. Restituisce il testo corretto e l'elenco delle regole applicate.
+    param([string] $Text, [bool] $AllowCheckboxes, [bool] $IsPullRequest)
+    $applied = [System.Collections.Generic.List[string]]::new()
+    if (-not $Text) { return [pscustomobject]@{ Text = $Text; Applied = @() } }
+    $lines = $Text -split "`r?`n"
+    $output = [System.Collections.Generic.List[string]]::new()
+    $inFence = $false
+    $skippingChecklist = $false
+    foreach ($line in $lines) {
+        if ($line -match '^\s*```') { $inFence = -not $inFence; $output.Add($line); continue }
+        if ($inFence) { $output.Add($line); continue }
+        if ($IsPullRequest) {
+            if ($line -match '^##\s+Checklist\s*$') { $skippingChecklist = $true; $applied.Add('sezione Checklist rimossa'); continue }
+            if ($skippingChecklist) {
+                if ($line -match '^##\s' -or $line -match '^\s*(Closes|Refs):?\s+#') { $skippingChecklist = $false } else { continue }
+            }
+        }
+        $new = $line
+        if ($new -match '^###\s') { $new = $new -replace '^###\s', '## '; $applied.Add('### → ##') }
+        if ($new -match 'Obbiettivo') { $new = $new -replace 'Obbiettivo', 'Obiettivo'; $applied.Add('«Obbiettivo» → «Obiettivo»') }
+        if ($new -match '\bN/A\b') { $new = $new -replace '\bN/A\b', 'Non applicabile'; $applied.Add('«N/A» → «Non applicabile»') }
+        if (-not $AllowCheckboxes -and $new -match '^(\s*)- \[[ xX]\] ') { $new = $new -replace '^(\s*)- \[[ xX]\] ', '$1- '; $applied.Add('checkbox → elenco') }
+        if ($new -match '^\s*-?\s*\*{0,2}Parent( issue)?:?\*{0,2}\s*(\S.*)$') {
+            $target = $Matches[2].Trim() -replace '\*', ''
+            $new = "- Issue: $target — genitore storico"; $applied.Add('riga Parent → Riferimenti')
+        }
+        # Sostituzioni che devono evitare il codice inline: si lavora sui segmenti fuori dagli apici inversi.
+        $segments = $new -split '(`[^`]*`)'
+        for ($i = 0; $i -lt $segments.Count; $i += 2) {
+            $segment = $segments[$i]
+            if ($segment -match '->') { $segment = $segment -replace '->', '→'; $applied.Add('«->» → «→»') }
+            if ($segment -match '\bJira\b') { $segment = $segment -replace '\bJira\b', 'JIRA'; $applied.Add('«Jira» → «JIRA»') }
+            $segments[$i] = $segment
+        }
+        $output.Add(($segments -join ''))
+    }
+    return [pscustomobject]@{ Text = ($output -join "`n"); Applied = @($applied | Sort-Object -Unique) }
 }
 
 function Get-IssueNumbersFromText {
@@ -106,6 +152,7 @@ function Get-ReleasedInValues {
 $Report = [System.Text.StringBuilder]::new()
 $Changes = @()
 $Findings = @()
+$TextFixes = @()
 $Now = Get-Date
 [void] $Report.AppendLine("# Warden: rapporto del $($Now.ToString('dd/MM/yyyy HH:mm'))")
 [void] $Report.AppendLine()
@@ -182,7 +229,11 @@ foreach ($repository in $Repositories) {
         if (-not $issue.assignees -or $issue.assignees.Count -eq 0) { $reasons += 'assegnatario mancante' }
         $body = [string] $issue.body
         if ($body -match '(?m)^###\s') { $reasons += 'intestazioni ### nel corpo' }
-        if ($body -match '(?im)^\s*\*{0,2}Parent:?\*{0,2}') { $reasons += 'riga Parent: nel corpo' }
+        if ($body -match '(?im)^\s*-?\s*\*{0,2}Parent( issue)?:?\*{0,2}\s') { $reasons += 'riga Parent: nel corpo' }
+        if ($FixText) {
+            $repair = Repair-Body -Text $body -AllowCheckboxes ($issue.issueType.name -in @('Feature', 'RFC', 'CR')) -IsPullRequest $false
+            if ($repair.Text -ne $body) { $TextFixes += [pscustomobject]@{ Repository = $repository; Kind = 'issue'; Number = $number; Url = $issue.url; Applied = ($repair.Applied -join '; '); Text = $repair.Text } }
+        }
         if ($body -notmatch '(?m)^##\s+Obiettivo') { $reasons += 'sezione Obiettivo mancante' }
         if ($body -notmatch '(?m)^##\s+Riferimenti') { $reasons += 'sezione Riferimenti mancante' }
         if ($body -match 'Obbiettivo') { $reasons += '«Obbiettivo»' }
@@ -254,6 +305,10 @@ foreach ($repository in $Repositories) {
         if ($body -match '(?m)^\s*- \[[ x]\]') { $reasons += 'checkbox nel corpo' }
         if ($body -match '(?m)^###\s') { $reasons += 'intestazioni ### nel corpo' }
         if (-not $pull.milestone -and $repository -ne '.github') { $reasons += 'milestone mancante' }
+        if ($FixText) {
+            $repair = Repair-Body -Text $body -AllowCheckboxes $false -IsPullRequest $true
+            if ($repair.Text -ne $body) { $TextFixes += [pscustomobject]@{ Repository = $repository; Kind = 'pull request'; Number = [int] $pull.number; Url = $pull.url; Applied = ($repair.Applied -join '; '); Text = $repair.Text } }
+        }
         if ($reasons.Count -gt 0) {
             $Findings += [pscustomobject]@{ Repository = $repository; Kind = 'pull request'; Number = [int] $pull.number; Title = $pull.title; Url = $pull.url; Reasons = ($reasons -join '; ') }
         }
@@ -297,7 +352,35 @@ if ($Apply -and $Changes.Count -gt 0) {
     }
 }
 
+if ($Apply -and $FixText -and $TextFixes.Count -gt 0) {
+    Write-Host "Correzione del testo di $($TextFixes.Count) elementi…"
+    $bodyFile = Join-Path ([System.IO.Path]::GetTempPath()) 'warden-body.md'
+    foreach ($fix in $TextFixes) {
+        Start-Sleep -Milliseconds 800
+        [System.IO.File]::WriteAllText($bodyFile, $fix.Text, [System.Text.UTF8Encoding]::new($false))
+        $command = if ($fix.Kind -eq 'issue') { 'issue' } else { 'pr' }
+        $arguments = @($command, 'edit', "$($fix.Number)", '--repo', "$Organization/$($fix.Repository)", '--body-file', $bodyFile)
+        try { [void] (Invoke-Gh $arguments) }
+        catch {
+            if ("$_" -match 'rate limit') { Write-Host 'Limite API raggiunto: attendo 90 secondi…'; Start-Sleep -Seconds 90; [void] (Invoke-Gh $arguments) }
+            else { Write-Warning "Testo non scritto su $($fix.Kind) #$($fix.Number) ($($fix.Repository)): $_" }
+        }
+    }
+    Remove-Item $bodyFile -ErrorAction SilentlyContinue
+}
+
 # ---------- Report ----------
+if ($FixText) {
+    [void] $Report.AppendLine('## Correzioni di testo ' + $(if ($Apply) { 'applicate' } else { 'da applicare' }))
+    [void] $Report.AppendLine()
+    if ($TextFixes.Count -eq 0) { [void] $Report.AppendLine('Nessuna.') }
+    else {
+        [void] $Report.AppendLine('| Repository | Elemento | Correzioni |')
+        [void] $Report.AppendLine('|---|---|---|')
+        foreach ($fix in $TextFixes | Sort-Object Repository, Kind, Number) { [void] $Report.AppendLine("| $($fix.Repository) | $($fix.Kind) [#$($fix.Number)]($($fix.Url)) | $($fix.Applied) |") }
+    }
+    [void] $Report.AppendLine()
+}
 [void] $Report.AppendLine('## Stato e ambienti: modifiche ' + $(if ($Apply) { 'applicate' } else { 'da applicare' }))
 [void] $Report.AppendLine()
 if ($Changes.Count -eq 0) { [void] $Report.AppendLine('Nessuna: i project sono allineati ai fatti.') }

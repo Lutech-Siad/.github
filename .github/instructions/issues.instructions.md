@@ -8,7 +8,7 @@ description: "Use when: creating, drafting, editing or reviewing a GitHub issue,
 |---|---|
 | **Creato** | 11/11/2026 |
 | **Aggiornato** | 23/11/2026 |
-| **Revisione** | 4 |
+| **Revisione** | 5 |
 
 Regole per tipo, campi, project, milestone, titolo, corpo, relazioni e commenti delle issue. La procedura (inferenza, domande, bozza, creazione) è nel custom agent `issues`. Milestone: [`git.instructions.md §6`](git.instructions.md). Glossario, lingua, label e persone: [`docs/conventions.md`](../../docs/conventions.md).
 
@@ -92,7 +92,7 @@ Formato: `<Contesto>: <Titolo>`, con Contesto facoltativo
 |---|---|
 | Bug, Problem, Hotfix | il **sintomo**, come lo vede chi lo incontra: `Errore 500 al salvataggio di un'offerta con righe gas miste` |
 | Tutti gli altri tipi | **verbo all'infinito + oggetto**: `Aggiungere il filtro per stato nella lista offerte`; la issue di release si intitola sempre `Rilasciare la versione v<major>.<minor>.<patch>` |
-| Contesto | facoltativo, un'area dell'applicazione da un elenco chiuso (in via di definizione), seguito da `: ` |
+| Contesto | facoltativo, seguito da `: `, da questo elenco chiuso. Iniziative: `Angular 21`, `.NET 10`, `RBAC`, `IDOR`, `Qualys`, `Collaudo`, e per il CRM `Go-live`, `Flussi` o `Flusso NN`, `Multi-Company`, `Consultazione`, `Spegnimento`. Aree dell'applicazione: `Offerte`, `Contratti`, `RDA`, `Ordini PIMS`, `Job Number`, `Sistemi`, `Installazioni`, `Clienti`, `Utenti`, `Menu`, `Documenti`, `Scadenze`, `Manutenzioni`, `JDE`, `Gestione errori`. Una voce nuova si aggiunge qui prima di usarla |
 | Forma | Sentence case, senza punto finale, al massimo 80 caratteri |
 | Vietato | prefissi `[BE]`, `[FE]`, sigle, formato conventional commit |
 
