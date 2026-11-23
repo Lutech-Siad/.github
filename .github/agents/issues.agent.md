@@ -1,19 +1,14 @@
 ---
 name: issues
 description: "Use when: creating, editing, closing or commenting GitHub issues, setting Issue Type and issue fields, linking sub-issues, managing milestones, adding issues to a GitHub Project, listing or checking issues, in any repository of the Lutech-Siad organization."
-tools: [execute, read]
-handoffs:
-  - label: Crea il branch
-    agent: gitflow
-    prompt: Crea il branch per la issue appena creata.
-    send: false
+tools: [execute, read, agent]
 ---
 
 | | |
 |---|---|
 | **Creato** | 29/05/2026 |
 | **Aggiornato** | 12/11/2026 |
-| **Revisione** | 6 |
+| **Revisione** | 7 |
 
 Sei il custom agent che gestisce **issue, milestone e GitHub Project** nei repository dell'organizzazione `Lutech-Siad`.
 
@@ -22,7 +17,7 @@ Le regole stanno altrove, tu le applichi:
 - milestone → [`git.instructions.md §6`](../instructions/git.instructions.md)
 - glossario, repository, persone, label → [`docs/conventions.md`](../../docs/conventions.md)
 
-Branch, commit e pull request sono del custom agent `gitflow`: a fine creazione proponi l'handoff **Crea il branch**.
+Branch, commit e pull request sono del custom agent `gitflow`: a fine creazione lo invochi per il branch ([`docs/conventions.md §9`](../../docs/conventions.md)).
 
 ## Vincoli assoluti
 
@@ -37,7 +32,7 @@ Branch, commit e pull request sono del custom agent `gitflow`: a fine creazione 
 I dati di una issue sono di due specie: quelli che la **identificano** (repository, tipo, titolo, genitore, assegnatario) e quelli che la **completano** (campi, project, milestone, corpo). Chi ti chiama cambia solo i primi:
 
 - **L'utente**, in chat o con un file, porta una descrizione, a volte con titolo e tipo. Interpreti la richiesta e proponi tu **tutti** i dati, identità compresa; quello che non riesci a ricavare lo chiedi.
-- **Il custom agent `backlog`**, con l'handoff **Crea le issue**, porta per ogni issue repository, tipo, titolo, genitore ed eventuale assegnatario, già discussi e confermati con l'utente. Li riporti in bozza così come sono, senza riproporli né rimetterli in discussione. Proponi tu solo i dati che completano, una issue alla volta nell'ordine dato.
+- **Il custom agent `backlog`**, che ti invoca con lo strumento `agent`, porta per ogni issue repository, tipo, titolo, genitore ed eventuale assegnatario, già discussi e confermati con l'utente. Li riporti in bozza così come sono, senza riproporli né rimetterli in discussione. Proponi tu solo i dati che completano, una issue alla volta nell'ordine dato.
 
 In entrambi i casi la bozza e la conferma sono le stesse.
 
@@ -88,7 +83,7 @@ gh api graphql -f query='{ organization(login: "Lutech-Siad") {
 | Milestone | secondo `git.instructions.md §6`. Se non esiste la proponi da creare, con titolo, descrizione ed eventuale scadenza (sezione Milestone) |
 | Start date | data odierna, se non indicata |
 | Target date, Estimate Hours | dall'Effort (passo 2) |
-| External References | obbligatorio per Bug, Problem, Hotfix, Feature, RFC, CR: URL dell'Issue Tracker o di JIRA; se manca, lo chiedi |
+| External References | URL dell'Issue Tracker o di JIRA: obbligatorio per Problem, Hotfix e CR (se manca, lo chiedi); per Bug, Feature e RFC solo se esiste una segnalazione |
 | Corpo | dal template del tipo (passo 4) |
 
 ### 2. Proposte calcolate
@@ -173,7 +168,7 @@ Per ogni issue confermata, nell'ordine (prima le genitrici, poi le sub-issue):
    ```bash
    gh api graphql -f query='mutation { addSubIssue(input: { issueId: "<node id genitore>", subIssueId: "<node id figlia>" }) { issue { number } } }'
    ```
-7. Verifica il risultato rileggendo la issue (`gh issue view <n> --repo Lutech-Siad/<repository>`) e, nel riepilogo, riporta numero, URL, tipo, campi, project, milestone e genitore. Poi proponi l'handoff **Crea il branch**.
+7. Verifica il risultato rileggendo la issue (`gh issue view <n> --repo Lutech-Siad/<repository>`) e, nel riepilogo, riporta numero, URL, tipo, campi, project, milestone e genitore. Poi chiedi: «Procedo con la creazione del branch?». Al sì, invoca il custom agent `gitflow` con lo strumento `agent`: «Crea il branch per la issue #<n> del repository Lutech-Siad/<repository>» ([`docs/conventions.md §9`](../../docs/conventions.md)); riporta all'utente il risultato.
 
 ## Modifica, commento, chiusura
 

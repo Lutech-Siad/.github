@@ -9,7 +9,7 @@ applyTo: "**"
 |---|---|
 | **Creato** | 29/05/2026 |
 | **Aggiornato** | 12/11/2026 |
-| **Revisione** | 4 |
+| **Revisione** | 6 |
 
 Regole per branch, commit, versioni, release e milestone. Le procedure (bozza, conferma, esecuzione) sono nel custom agent `gitflow`. Glossario, lingua, repository e persone: [`docs/conventions.md`](../../docs/conventions.md). Formato delle pull request: [`pull-requests.instructions.md`](pull-requests.instructions.md). Issue: [`issues.instructions.md`](issues.instructions.md).
 
@@ -18,11 +18,11 @@ Regole per branch, commit, versioni, release e milestone. Le procedure (bozza, c
 Configurazione locale al repository, senza `--global`:
 
 ```bash
-git config user.name "Nome Cognome"
+git config user.name "<username GitHub>"
 git config user.email "nome.cognome@lutech.it"
 ```
 
-`user.name` è nome e cognome per esteso, non lo username GitHub: è quello che compare nello storico.
+`user.name` è lo username GitHub (`jenny11lutech`, `fabioped76`, `jonathanvillafana`: [`docs/conventions.md §3`](../../docs/conventions.md)), uguale in tutti i repository; `user.email` è l'indirizzo Lutech, che GitHub usa per collegare il commit all'account.
 
 ## 2. Branch
 
@@ -43,6 +43,7 @@ Pattern: `<tipo>/<n>_<slug>`
 |---|---|---|---|
 | `feature` | `develop` | `develop` | nuova funzionalità, refactoring, migrazione, attività |
 | `fix` | `develop` | `develop` | correzione non urgente (Bug, Problem) |
+| `fix` | `release/…` | lo stesso `release/…` | Bug trovato collaudando una release in corso: la issue entra nelle «Issue incluse» della release (vedi §5) |
 | `hotfix` | `main` | `main`, poi backmerge | correzione urgente in produzione |
 | `release` | `develop` | `main`, poi backmerge | rilascio di una versione |
 | `backmerge` | `main` | `develop` | riallineamento di `develop` dopo release o hotfix |
@@ -163,7 +164,7 @@ Esiste anche l'avvio manuale (`workflow_dispatch`) con scelta del bump. Il workf
 ## 5. Release e backmerge
 
 1. **Issue di release** (tipo Task, template Release, milestone = versione) con l'elenco puntato delle issue incluse: non sub-issue, perché quel lavoro ha già la sua issue, il suo branch e la sua pull request.
-2. **Branch** `release/<n>_v<major>-<minor>-<patch>` da `develop`; le correzioni di rilascio si committano lì con `Refs: #<n>`.
+2. **Branch** `release/<n>_v<major>-<minor>-<patch>` da `develop`; le correzioni minute di rilascio si committano lì con `Refs: #<n>`. Un Bug trovato collaudando la release ha la sua issue, un branch `fix/<n>_<slug>` creato dal branch di release e una pull request verso il branch di release; la issue entra nell'elenco delle issue incluse.
 3. **Pull request** verso `main`: titolo `release: v<major>.<minor>.<patch>`; footer `Closes: #<n>` per la issue di release e per ogni issue inclusa (si chiudono al merge su `main`, non prima); merge squash.
 4. **Backmerge**: branch `backmerge/<n>_v<major>-<minor>-<patch>` da `main`, pull request verso `develop` con titolo `chore(repo): riallinea develop con main dopo la release v<major>.<minor>.<patch>` e footer `Refs: #<n>`; merge commit. Va aperto subito dopo il merge della release, a mano o con il custom agent `gitflow`.
 

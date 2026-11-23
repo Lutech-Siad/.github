@@ -9,7 +9,7 @@ applyTo: "**/.github/prompts/**"
 |---|---|
 | **Creato** | 11/06/2026 |
 | **Aggiornato** | 12/11/2026 |
-| **Revisione** | 4 |
+| **Revisione** | 6 |
 
 Regole per percorso, nome, intestazione e contenuto dei piani di sviluppo, e per il loro aggiornamento durante l'esecuzione. La procedura di scrittura (analisi, stesura, revisione nell'editor, commit) è nel custom agent `planning`. Glossario: [`docs/conventions.md §1`](../../docs/conventions.md); struttura di `.github/` e data nei file: [`docs/conventions.md §8`](../../docs/conventions.md).
 
@@ -20,7 +20,7 @@ I piani stanno in `.github/prompts/` del repository a cui si riferiscono, in una
 | Sottocartella | Stato |
 |---|---|
 | `active/` | in lavorazione |
-| `done/` | completato: tutte le caselle dello Stato e dei Criteri di accettazione spuntate. Lo spostamento avviene **sul branch di lavoro, prima della pull request**: dopo il merge il branch non esiste più |
+| `done/` | completato: tutte le caselle dello Stato spuntate e i Criteri di accettazione verificabili prima del rilascio spuntati (vedi §5). Lo spostamento avviene **sul branch di lavoro, prima della pull request**: dopo il merge il branch non esiste più |
 | `superseded/` | sostituito da un piano successivo, che lo indica in **Sostituisce** |
 
 Un piano cambia stato spostando il file, senza rinominarlo. Il file lo scrive un agent (il custom agent `planning`), mai il comando «Save as prompt file» di VS Code, che non rispetta nome e percorso.
@@ -92,6 +92,7 @@ Regole di scrittura: lingua italiana, niente abbreviazioni, frecce con `→`; pe
 
 - Per ogni voce dello Stato: eseguire → se esiste un modo per verificarne l'esito (build, test, controllo pertinente) verificare → spuntare la casella → passare alla successiva. Una voce con verifica oggettiva non si spunta prima della verifica.
 - Ogni modifica al piano aggiorna **Aggiornato** e **Revisione**; **Creato** e il nome del file non cambiano.
-- Chi esegue non committa mai. Finita l'ultima voce dello Stato, verifica i Criteri di accettazione, li spunta e invita l'utente a tornare al custom agent `planning`, che chiude il piano: sposta il file in `done/` e fa un solo commit con tutto il lavoro, piano compreso, con il messaggio secondo [`git.instructions.md §3`](git.instructions.md) e `Refs: #<n>`. Con **Commit automatico** `sì` lo esegue `planning` senza chiedere; con `no` lo fa `gitflow` con bozza e conferma. Mai push: il push e la pull request si fanno con `gitflow`.
+- Un criterio di accettazione che si può collaudare solo in ambiente di test dopo il rilascio resta non spuntato, con la nota «da collaudare dopo il rilascio»; l'esito si registra nella issue con un commento `**Stato:**` ([`issues.instructions.md §8`](issues.instructions.md)). Il piano passa comunque in `done/` e la pull request non si apre finché il piano è in `active/`: il custom agent `gitflow` lo controlla.
+- Chi esegue (il subagent avviato da `planning`, o l'utente) non committa mai. Finita l'ultima voce dello Stato, verifica i Criteri di accettazione, li spunta e restituisce il risultato al custom agent `planning`, che chiude il piano: sposta il file in `done/` e fa un solo commit con tutto il lavoro, piano compreso, con il messaggio secondo [`git.instructions.md §3`](git.instructions.md) e `Refs: #<n>`. Con **Commit automatico** `sì` lo esegue `planning` senza chiedere; con `no` lo fa `gitflow` con bozza e conferma. Mai push: il push e la pull request si fanno con `gitflow`.
 - Un piano grande che coordina più piani (per esempio un audit in wave) elenca i piani figli nello Stato, con il link; ogni figlio indica il padre in **Dipende da**.
 - Se un piano ne sostituisce un altro, il vecchio passa in `superseded/` e il nuovo lo indica in **Sostituisce**. Un piano interrotto senza sostituto resta in `active/` finché non si decide cosa farne.

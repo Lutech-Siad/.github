@@ -8,7 +8,7 @@ description: "Use when: creating, drafting, editing or reviewing a GitHub issue,
 |---|---|
 | **Creato** | 11/11/2026 |
 | **Aggiornato** | 12/11/2026 |
-| **Revisione** | 2 |
+| **Revisione** | 3 |
 
 Regole per tipo, campi, project, milestone, titolo, corpo, relazioni e commenti delle issue. La procedura (inferenza, domande, bozza, creazione) è nel custom agent `issues`. Milestone: [`git.instructions.md §6`](git.instructions.md). Glossario, lingua, label e persone: [`docs/conventions.md`](../../docs/conventions.md).
 
@@ -38,7 +38,7 @@ Campi di organizzazione (Issue Fields), da impostare su ogni issue.
 | `Effort` | `XS`, `S`, `M`, `L`, `XL` (vedi sotto) | sempre |
 | `Activity` | `development`, `docs`, `infrastructure`, `configuration` | sempre |
 | `Component` | `frontend`, `backend`, `jobs`, `translations`, `multi-projects` | sempre |
-| `External References` | URL del riferimento esterno principale (Issue Tracker o JIRA, vedi §6) | per Bug, Problem, Hotfix, Feature, RFC, CR |
+| `External References` | URL del riferimento esterno principale (Issue Tracker o JIRA, vedi §6) | per Problem, Hotfix e CR; per Bug, Feature e RFC se esiste una segnalazione |
 | `Start date` | data ISO `AAAA-MM-GG`; se non indicata, la data odierna | sempre |
 | `Target date` | data ISO `AAAA-MM-GG`; se non indicata, si propone dall'Effort (vedi sotto) | no |
 | `Estimate Hours` | ore stimate; se non indicate, si propongono dall'Effort (vedi sotto) | no |
